@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "664458533201",
+    "project_id": "syntaxappproject",
+    "storage_bucket": "syntaxappproject.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664458533201:android:87830f84df0ad2d7435b70",
+        "android_client_info": {
+          "package_name": "com.example.syntaxappproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPX_1qxAU_hVcuCLd59HBBMNBtU6fJ2DY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
