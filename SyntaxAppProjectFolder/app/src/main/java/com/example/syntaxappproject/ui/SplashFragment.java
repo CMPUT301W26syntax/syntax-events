@@ -1,14 +1,16 @@
 package com.example.syntaxappproject.ui;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.syntaxappproject.AuthenticationService;
+import com.example.syntaxappproject.ProfileRepository;
 import com.example.syntaxappproject.R;
 
 public class SplashFragment extends Fragment {
@@ -21,21 +23,32 @@ public class SplashFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        new Handler().postDelayed(() -> {
+        Button enterButton = view.findViewById(R.id.enterButton);
 
-            SharedPreferences prefs = requireActivity()
-                    .getSharedPreferences("UserPrefs", 0);
+        enterButton.setOnClickListener(v -> {
+            AuthenticationService authService = new AuthenticationService();
 
-            boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
+            authService.signInAnonymously(success -> {
+                if (!success) return;
 
-            if (isLoggedIn) {
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_splash_to_home);
-            } else {
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_splash_to_profile);
-            }
+                String uid = authService.getCurrentUserId();
+                ProfileRepository profileRepo = new ProfileRepository();
 
-        }, 1000);
+                profileRepo.getProfile(uid, profile -> {
+                    if (!isAdded()) return;
+
+                    requireActivity().runOnUiThread(() -> {
+                        NavController navController =
+                                NavHostFragment.findNavController(this);
+
+                        if (profile != null) {
+                            navController.navigate(R.id.action_splash_to_home);
+                        } else {
+                            navController.navigate(R.id.action_splash_to_profile);
+                        }
+                    });
+                });
+            });
+        });
     }
 }

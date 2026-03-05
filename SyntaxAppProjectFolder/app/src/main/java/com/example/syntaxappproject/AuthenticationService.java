@@ -12,7 +12,6 @@ public class AuthenticationService {
 
     public void signInAnonymously(AuthCallback callback) {
 
-        // If already logged in, don't sign in again
         if (auth.getCurrentUser() != null) {
             callback.onComplete(true);
             return;
@@ -29,8 +28,6 @@ public class AuthenticationService {
         }
         return null;
     }
-
-    // Callback interface
     public interface AuthCallback {
         void onComplete(boolean success);
     }
