@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:background="@drawable/home_bar_background"
+    android:gravity="center">
+
+
+
+    <ImageButton
+        android:id="@+id/homeButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:adjustViewBounds="true"
+
+
+        android:backgroundTint="@null"
+
+        android:outlineProvider="paddedBounds"
+        android:padding="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/home"
+        android:background="@null"
+  />
+
+    <ImageButton
+        android:id="@+id/userButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+
+        android:adjustViewBounds="true"
+
+        android:padding="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/user"
+        android:background="@null"
+
+/>
+
+    <ImageButton
+        android:id="@+id/qrScannerButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+
+        android:adjustViewBounds="true"
+
+        android:padding="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/qr_scan"
+        android:background="@null"
+/>
+
+    <ImageButton
+        android:id="@+id/notificationButton"
+
+
+        android:background="@null"
+        android:layout_width="80dp"
+
+        android:layout_height="80dp"
+        android:adjustViewBounds="true"
+        android:padding="16dp"
+
+        android:scaleType="fitCenter"
+        android:src="@drawable/bell" />
+</LinearLayout>
