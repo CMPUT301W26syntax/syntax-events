@@ -20,17 +20,20 @@ public class EventDetailRepository {
         detailRef.get().addOnSuccessListener(documentSnapshot -> {
 
             if (documentSnapshot.exists()) {
-                String eventName = documentSnapshot.getString("title");
+                String eventName = documentSnapshot.getString("name");
                 String description = documentSnapshot.getString("description");
-                String date = documentSnapshot.getString("startDate");
+                String startingEventDateDate = documentSnapshot.getString("startingEventDate");
+                String endingEventDateDate = documentSnapshot.getString("endingEventDate");
                 String location = documentSnapshot.getString("location");
-                String regiPeriod = documentSnapshot.getString("regiPeriod");
-                String capacity = documentSnapshot.getString("capacity");
-                String wLCount = documentSnapshot.getString("wLCount");
-                //String lotteryCriteria = documentSnapshot.getString("");
-                String lotteryCriteria = "test";
+                String startingRegistrationPeriod = documentSnapshot.getString("startingRegistrationPeriod");
+                String endingRegistrationPeriod = documentSnapshot.getString("endingRegistrationPeriod");
+                Long capacity = documentSnapshot.getLong("capacity");
+                boolean geoReq = Boolean.TRUE.equals(documentSnapshot.getBoolean("geoReq"));
+                String waitlistCount = documentSnapshot.getString("waitlistCount");
+                String lotteryCriteria = documentSnapshot.getString("lotteryCriteria");
                 String poster = documentSnapshot.getString("poster");
-                event = new EventDetail(eventName, description, date, location, regiPeriod, capacity, wLCount, lotteryCriteria, poster);
+                event = new EventDetail(eventId, eventName, description, location, capacity, geoReq, startingEventDateDate,
+                        endingEventDateDate, startingRegistrationPeriod,endingRegistrationPeriod, waitlistCount, lotteryCriteria, poster);
                 callback.onEventLoaded(event);
             }
         });

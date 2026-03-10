@@ -70,14 +70,14 @@ public class EventDetailFragment extends Fragment {
         EventDetailRepository eventDetailRepo = new EventDetailRepository();
 
         eventDetailRepo.getEventDetail(eventId, event -> {
-            Glide.with(this).load(event.poster).into(eventPoster);
-            eventName.setText(event.title);
-            description.setText("Description: \n" + event.description);
-            date.setText("Date: " + event.startDate);
-            location.setText("Location: " + event.location);
-            regiPeriod.setText("Registration Period: " + event.regiPeriod);
-            capacity.setText("Capacity: " + event.capacity);
-            wLCount.setText("Waiting List Count: " + event.wLCount);
+            Glide.with(this).load(event.getPoster()).into(eventPoster);
+            eventName.setText(event.getName());
+            description.setText("Description: \n" + event.getDescription());
+            date.setText("Date: " + event.getStartingEventDate());
+            location.setText("Location: " + event.getLocation());
+            regiPeriod.setText("Registration Period: " + event.getStartingRegistrationPeriod());
+            capacity.setText("Capacity: " + event.getCapacity());
+            wLCount.setText("Waiting List Count: " + event.getWaitlistCount());
             //lotteryCriteria.setText("Lottery Criteria: " + event.lotteryCriteria);
             lotteryCriteria.setText("test");
         });

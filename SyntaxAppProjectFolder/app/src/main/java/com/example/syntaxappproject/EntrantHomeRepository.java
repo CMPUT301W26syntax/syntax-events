@@ -32,7 +32,7 @@ public class EntrantHomeRepository {
                 EventDetail event = doc.toObject(EventDetail.class);
 
                 if (event != null) {
-                    event.eventId = doc.getId();
+                    event.setEventId(doc.getId());
                     events.add(event);
                 }
             }

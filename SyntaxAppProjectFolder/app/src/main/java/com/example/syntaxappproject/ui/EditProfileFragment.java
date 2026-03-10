@@ -57,11 +57,11 @@ public class EditProfileFragment extends HomeBar {
         profileRepo.getProfile(uid, profile -> {
             if (profile != null && isAdded()) {
                 requireActivity().runOnUiThread(() -> {
-                    String[] names = profile.name.split(" ", 2);
+                    String[] names = profile.getName().split(" ", 2);
                     editFirstName.setText(names.length > 0 ? names[0] : "");
                     editLastName.setText(names.length > 1 ? names[1] : "");
-                    editEmail.setText(profile.email);
-                    editPhone.setText(profile.phone != null ? profile.phone : "");
+                    editEmail.setText(profile.getEmail());
+                    editPhone.setText(profile.getPhone() != null ? profile.getPhone() : "");
                 });
             }
         });
@@ -79,17 +79,23 @@ public class EditProfileFragment extends HomeBar {
         }
 
         String uid = authService.getCurrentUserId();
-        Profile updated = new Profile(firstName + " " + lastName, email, phone.isEmpty() ? null : phone, "", true, uid);
 
-        profileRepo.updateProfile(uid, updated, success -> {
-            if (success && isAdded()) {
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT).show();
-                    NavHostFragment.findNavController(this).navigateUp();  // Back to UserFragment
-                });
-            } else {
-                Toast.makeText(requireContext(), "Save failed", Toast.LENGTH_SHORT).show();
-            }
+        profileRepo.getProfile(uid, existing -> {
+            boolean isEntrant = existing != null && existing.isEntrant();
+            boolean isOrganizer = existing != null && existing.isOrganizer();
+
+            Profile updated = new Profile(firstName + " " + lastName, email, phone.isEmpty() ? null : phone, isEntrant, isOrganizer, existing != null && existing.isNotificationsEnabled(), uid);
+
+            profileRepo.updateProfile(uid, updated, success -> {
+                if (success && isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT).show();
+                        NavHostFragment.findNavController(this).navigateUp();  // Back to UserFragment
+                    });
+                } else {
+                    Toast.makeText(requireContext(), "Save failed", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 

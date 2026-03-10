@@ -70,7 +70,7 @@ public class EventHistoryFragment extends HomeBar {
 
             for (EventDetail event : events) {
 
-                joinRepo.hasJoined(event.eventId, uid, joined -> {
+                joinRepo.hasJoined(event.getEventId(), uid, joined -> {
 
                     if (joined) {
                         joinedEvents.add(event);
@@ -96,7 +96,7 @@ public class EventHistoryFragment extends HomeBar {
         EventDetailFragment fragment = new EventDetailFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putString("eventId", event.eventId);
+        bundle.putString("eventId", event.getEventId());
 
         fragment.setArguments(bundle);
 
