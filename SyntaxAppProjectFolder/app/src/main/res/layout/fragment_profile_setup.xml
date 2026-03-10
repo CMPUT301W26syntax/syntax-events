@@ -178,7 +178,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Confirm Button -->
                 <Button
                     android:id="@+id/confirmButton"
                     android:layout_width="160dp"
