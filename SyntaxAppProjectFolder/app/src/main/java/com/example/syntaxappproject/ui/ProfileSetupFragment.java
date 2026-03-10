@@ -19,8 +19,6 @@ import com.example.syntaxappproject.R;
 
 public class ProfileSetupFragment extends Fragment {
 
-    private String selectedRole = "Entrant";
-
     public ProfileSetupFragment() {
         super(R.layout.fragment_profile_setup);
     }
@@ -38,23 +36,35 @@ public class ProfileSetupFragment extends Fragment {
         EditText email = view.findViewById(R.id.emailInput);
         EditText phone = view.findViewById(R.id.phoneInput);
 
+        boolean[] isEntrant = {true};
+        boolean[] isOrganizer = {false};
+
+        // Default state
+        entrantButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2ECC71")));
+        entrantButton.setTextColor(Color.WHITE);
+        organizerButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D3D3D3")));
+        organizerButton.setTextColor(Color.BLACK);
+
         entrantButton.setOnClickListener(v -> {
-            selectedRole = "Entrant";
-            entrantButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2ECC71")));
-            entrantButton.setTextColor(Color.WHITE);
-            organizerButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D3D3D3")));
-            organizerButton.setTextColor(Color.BLACK);
+            isEntrant[0] = !isEntrant[0];
+            entrantButton.setBackgroundTintList(ColorStateList.valueOf(
+                    Color.parseColor(isEntrant[0] ? "#2ECC71" : "#D3D3D3")));
+            entrantButton.setTextColor(isEntrant[0] ? Color.WHITE : Color.BLACK);
         });
 
         organizerButton.setOnClickListener(v -> {
-            selectedRole = "Organizer";
-            organizerButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2ECC71")));
-            organizerButton.setTextColor(Color.WHITE);
-            entrantButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D3D3D3")));
-            entrantButton.setTextColor(Color.BLACK);
+            isOrganizer[0] = !isOrganizer[0];
+            organizerButton.setBackgroundTintList(ColorStateList.valueOf(
+                    Color.parseColor(isOrganizer[0] ? "#2ECC71" : "#D3D3D3")));
+            organizerButton.setTextColor(isOrganizer[0] ? Color.WHITE : Color.BLACK);
         });
 
         confirmButton.setOnClickListener(v -> {
+            if (!isEntrant[0] && !isOrganizer[0]) {
+                Toast.makeText(requireContext(), "Please select at least one role", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String firstNameVal = firstName.getText().toString().trim();
             String lastNameVal = lastName.getText().toString().trim();
             String emailVal = email.getText().toString().trim();
@@ -80,7 +90,7 @@ public class ProfileSetupFragment extends Fragment {
 
                 Profile profile = new Profile(
                         fullName, emailVal, phoneVal.isEmpty() ? null : phoneVal,
-                        selectedRole, true, uid);
+                        isEntrant[0], isOrganizer[0], true, uid);
 
                 profileRepo.getProfile(uid, existingProfile -> {
                     if (existingProfile != null) {
@@ -115,6 +125,5 @@ public class ProfileSetupFragment extends Fragment {
                 });
             });
         });
-
     }
 }

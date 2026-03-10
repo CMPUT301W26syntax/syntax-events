@@ -85,6 +85,7 @@ public class CreateEventFragment extends HomeBar {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupHotbar(view);
         EditText eventName = view.findViewById(R.id.eventNameInput);
         EditText description= view.findViewById(R.id.descriptionInput);
         EditText location = view.findViewById(R.id.locationInput);

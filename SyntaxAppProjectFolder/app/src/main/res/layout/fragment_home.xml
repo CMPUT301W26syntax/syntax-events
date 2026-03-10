@@ -11,8 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--android:background="@drawable/emoticon_background"-->
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="187dp"
@@ -23,18 +21,16 @@
             android:textSize="60sp"
             android:textStyle="bold"
             android:typeface="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.058" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="85dp"
             app:cardBackgroundColor="#2ECC71"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
@@ -63,18 +59,41 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-
-                        <Button
-                            android:id="@+id/myEventButton"
-                            android:layout_width="wrap_content"
+                        <!-- Role-based buttons -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="#2ECC71"
-                            android:text="My Event" />
+                            android:layout_marginBottom="8dp"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/eventsButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:layout_weight="1"
+                                android:backgroundTint="#2ECC71"
+                                android:text="Events"
+                                android:visibility="gone" />
+
+                            <Button
+                                android:id="@+id/createEventButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_weight="1"
+                                android:backgroundTint="#2ECC71"
+                                android:text="Create Event"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:padding="8dp">
+
                             <EditText
                                 android:id="@+id/searchInput"
                                 android:layout_width="0dp"
@@ -90,10 +109,11 @@
                                 android:layout_height="40dp"
                                 android:backgroundTint="@android:color/transparent"
                                 android:src="@drawable/ic_filter" />
+
                         </LinearLayout>
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id = "@+id/eventList"
+                            android:id="@+id/eventList"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
 
@@ -111,7 +131,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

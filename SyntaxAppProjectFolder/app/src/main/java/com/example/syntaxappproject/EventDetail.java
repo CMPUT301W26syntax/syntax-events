@@ -10,7 +10,7 @@ public class EventDetail {
     private String name;            // title
     private String description;
     private String location;
-    private int capacity;
+    private long capacity;
     private boolean geoReq;
 
     // ─── Event Dates ──────────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ public class EventDetail {
 
     public EventDetail() {}
 
-    public EventDetail(String eventId, String name, String description, String location, int capacity, boolean geoReq,
+    public EventDetail(String eventId, String name, String description, String location, long capacity, boolean geoReq,
                  String startingEventDate, String endingEventDate,
                  String startingRegistrationPeriod, String endingRegistrationPeriod,
                  String waitlistCount, String lotteryCriteria, String poster) {
@@ -71,7 +71,7 @@ public class EventDetail {
     public void setLocation(String location) { this.location = location; }
 
     // Capacity
-    public int getCapacity() { return capacity; }
+    public long getCapacity() { return capacity; }
     public void setCapacity(int capacity) { this.capacity = capacity; }
 
     // Geolocation Requirement

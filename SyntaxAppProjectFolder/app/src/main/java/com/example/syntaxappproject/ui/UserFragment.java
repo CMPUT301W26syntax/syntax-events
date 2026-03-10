@@ -49,7 +49,9 @@ public class UserFragment extends HomeBar {
         });
 
         view.findViewById(R.id.eventHistoryButton).setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Event History coming soon", Toast.LENGTH_SHORT).show());
+                androidx.navigation.fragment.NavHostFragment
+                        .findNavController(this)
+                        .navigate(R.id.eventHistoryFragment));
 
         nameText.setText("Loading...");
         emailText.setText("Loading...");
@@ -69,9 +71,9 @@ public class UserFragment extends HomeBar {
     private void displayProfile(Profile profile) {
         if (profile != null && isAdded()) {
             requireActivity().runOnUiThread(() -> {
-                nameText.setText(profile.name);
-                emailText.setText(profile.email);
-                phoneText.setText(profile.phone != null ? profile.phone : "No phone set");
+                nameText.setText(profile.getName());
+                emailText.setText(profile.getEmail());
+                phoneText.setText(profile.getPhone() != null ? profile.getPhone() : "No phone set");
             });
         }
     }
