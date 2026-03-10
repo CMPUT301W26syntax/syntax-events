@@ -136,5 +136,23 @@
             app:destination="@id/createEventUploadPosterFragment"/>
 
     </fragment>
+    <fragment
+        android:id="@+id/createEventFragment"
+        android:name="com.example.syntaxappproject.ui.UserFragment"
+        android:label="CreateEvent">
+        <action
+            android:id="@+id/toUploadImageFragment"
+            app:destination="@id/createEventUploadPosterFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/createEventUploadPosterFragment"
+        android:name="com.example.syntaxappproject.ui.UserFragment"
+        android:label="CreateEvent">
+        <action
+            android:id="@+id/toUploadImageFragment"
+            app:destination="@id/toUploadImageFragment"/>
+
+    </fragment>
 
 </navigation>
