@@ -44,7 +44,7 @@
         app:destination="@id/userFragment"/>
     <action
         android:id="@+id/toQrCodeScannerFragment"
-        app:destination="@id/homeFragment"/>
+        app:destination="@id/QRCodeScannerFragment"/>
     <action
         android:id="@+id/toNotificationFragment"
         app:destination="@id/homeFragment"/>
@@ -60,12 +60,16 @@
             android:id="@+id/toUserFragment"
             app:destination="@id/userFragment"/>
         <action
-            android:id="@+id/toQrCodeScannerFragment"
-            app:destination="@id/homeFragment"/>
+            android:id="@+id/toQRCodeScannerFragment"
+            app:destination="@id/QRCodeScannerFragment"/>
         <action
             android:id="@+id/toNotificationFragment"
             app:destination="@id/homeFragment"/>
     </fragment>
+    <fragment
+        android:id="@+id/QRCodeScannerFragment"
+        android:name="com.example.syntaxappproject.ui.QRCodeScannerFragment"
+        android:label="QR Scanner"/>
 
     <fragment
         android:id="@+id/editProfileFragment"
