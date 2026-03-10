@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:startDestination="@id/homeFragment"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/splashFragment"
     android:id="@+id/nav_graph">
 
     <fragment
@@ -23,6 +24,12 @@
         <action
             android:id="@+id/action_profile_to_home"
             app:destination="@id/homeFragment"/>
+        <action
+            android:id="@+id/toUserFragmentFromSetup"
+            app:destination="@id/userFragment"
+            app:popUpTo="@id/userFragment"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
     <fragment
@@ -58,6 +65,18 @@
         <action
             android:id="@+id/toNotificationFragment"
             app:destination="@id/homeFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.syntaxappproject.ui.EditProfileFragment"
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_user_edit">
+        <action
+            android:id="@+id/action_editProfileFragment_to_userFragment"
+            app:destination="@id/userFragment"
+            app:popUpTo="@id/userFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
 </navigation>
