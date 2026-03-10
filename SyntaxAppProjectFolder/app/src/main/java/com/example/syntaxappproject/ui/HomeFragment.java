@@ -7,12 +7,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import com.example.syntaxappproject.EntrantHomeRepository;
+import com.example.syntaxappproject.EventAdapter;
+import com.example.syntaxappproject.EventDetail;
 import com.example.syntaxappproject.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +39,13 @@ public class HomeFragment extends HomeBar {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    //Events List parameters
+    private EventAdapter adapter;
+
+    private List<EventDetail> eventsList = new ArrayList<>();
+
+    private EntrantHomeRepository entrantHomeRepo = new EntrantHomeRepository();
 
     public HomeFragment() {
         // Required empty public constructor
@@ -74,5 +91,42 @@ public class HomeFragment extends HomeBar {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupHotbar(view); //set ups home bar
+        RecyclerView recyclerView = view.findViewById(R.id.eventList);
+        EditText searchBar = view.findViewById(R.id.searchInput);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new EventAdapter(new ArrayList<>(), this::openEventDetail);
+
+        recyclerView.setAdapter(adapter);
+
+        setEventsList();
+
+    }
+    private void setEventsList() {
+
+        entrantHomeRepo.getEvents(new EntrantHomeRepository.EventCallback() {
+
+            @Override
+            public void onSuccess(List<EventDetail> events) {
+                eventsList = events;
+                adapter.updateList(events);
+            }
+        });
+    }
+
+    private void openEventDetail(EventDetail event) {
+
+        EventDetailFragment fragment = new EventDetailFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("eventId", event.eventId);
+
+        fragment.setArguments(bundle);
+
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.nav_host_fragment, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

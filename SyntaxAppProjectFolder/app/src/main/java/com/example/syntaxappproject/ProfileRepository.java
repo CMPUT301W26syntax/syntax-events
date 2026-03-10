@@ -11,7 +11,6 @@ public class ProfileRepository {
     }
 
     public void createProfile(String uid, Profile profile, RepositoryCallback callback) {
-
         db.collection("profiles")
                 .document(uid)
                 .set(profile)
@@ -20,7 +19,6 @@ public class ProfileRepository {
     }
 
     public void getProfile(String uid, ProfileCallback callback) {
-
         db.collection("profiles")
                 .document(uid)
                 .get()
@@ -32,6 +30,22 @@ public class ProfileRepository {
                         callback.onResult(null);
                     }
                 });
+    }
+
+    public void updateProfile(String uid, Profile profile, RepositoryCallback callback) {
+        db.collection("profiles")
+                .document(uid)
+                .set(profile)
+                .addOnCompleteListener(task ->
+                        callback.onComplete(task.isSuccessful()));
+    }
+
+    public void deleteProfile(String uid, RepositoryCallback callback) {
+        db.collection("profiles")
+                .document(uid)
+                .delete()
+                .addOnCompleteListener(task ->
+                        callback.onComplete(task.isSuccessful()));
     }
 
     public interface RepositoryCallback {

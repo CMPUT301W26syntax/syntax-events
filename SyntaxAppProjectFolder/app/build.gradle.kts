@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.cardview)
+    implementation(libs.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -50,4 +52,6 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation ("com.github.bumptech.glide:glide:5.0.5")
+    annotationProcessor ("com.github.bumptech.glide:compiler:5.0.5")
 }

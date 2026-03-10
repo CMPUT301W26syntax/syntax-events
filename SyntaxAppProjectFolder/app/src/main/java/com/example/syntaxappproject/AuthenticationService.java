@@ -6,6 +6,10 @@ public class AuthenticationService {
 
     private FirebaseAuth auth;
 
+    public void signOut() {
+        auth.signOut();
+    }
+
     public AuthenticationService() {
         auth = FirebaseAuth.getInstance();
     }

@@ -61,8 +61,7 @@ public class ProfileSetupFragment extends Fragment {
             String phoneVal = phone.getText().toString().trim();
 
             if (firstNameVal.isEmpty() || emailVal.isEmpty()) {
-                Toast.makeText(requireContext(),
-                        "Name and Email are required", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Name and Email are required", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -72,8 +71,7 @@ public class ProfileSetupFragment extends Fragment {
             authService.signInAnonymously(success -> {
                 if (!success) {
                     requireActivity().runOnUiThread(() ->
-                            Toast.makeText(requireContext(),
-                                    "Authentication failed", Toast.LENGTH_SHORT).show());
+                            Toast.makeText(requireContext(), "Authentication failed", Toast.LENGTH_SHORT).show());
                     return;
                 }
 
@@ -81,27 +79,42 @@ public class ProfileSetupFragment extends Fragment {
                 String fullName = firstNameVal + " " + lastNameVal;
 
                 Profile profile = new Profile(
-                        fullName, emailVal, phoneVal,
+                        fullName, emailVal, phoneVal.isEmpty() ? null : phoneVal,
                         selectedRole, true, uid);
 
-                profileRepo.createProfile(uid, profile, saved -> {
-                    if (!isAdded()) return;
-                    requireActivity().runOnUiThread(() -> {
-                        if (saved) {
-                            requireActivity()
-                                    .getSharedPreferences("UserPrefs", 0)
-                                    .edit()
-                                    .putBoolean("isLoggedIn", true)
-                                    .apply();
-                            NavHostFragment.findNavController(this)
-                                    .navigate(R.id.action_profile_to_home);
-                        } else {
-                            Toast.makeText(requireContext(),
-                                    "Failed to save profile", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                profileRepo.getProfile(uid, existingProfile -> {
+                    if (existingProfile != null) {
+                        profileRepo.updateProfile(uid, profile, saved -> {
+                            if (!isAdded()) return;
+                            requireActivity().runOnUiThread(() -> {
+                                if (saved) {
+                                    NavHostFragment.findNavController(this).navigate(R.id.userFragment);
+                                    Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(requireContext(), "Update failed", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        });
+                    } else {
+                        profileRepo.createProfile(uid, profile, saved -> {
+                            if (!isAdded()) return;
+                            requireActivity().runOnUiThread(() -> {
+                                if (saved) {
+                                    requireActivity()
+                                            .getSharedPreferences("UserPrefs", 0)
+                                            .edit()
+                                            .putBoolean("isLoggedIn", true)
+                                            .apply();
+                                    NavHostFragment.findNavController(this).navigate(R.id.action_profile_to_home);
+                                } else {
+                                    Toast.makeText(requireContext(), "Failed to save profile", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        });
+                    }
                 });
             });
         });
+
     }
 }
