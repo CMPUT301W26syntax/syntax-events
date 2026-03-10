@@ -16,9 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.example.syntaxappproject.AuthenticationService;
 import com.example.syntaxappproject.EntrantHomeRepository;
 import com.example.syntaxappproject.EventAdapter;
 import com.example.syntaxappproject.EventDetail;
+import com.example.syntaxappproject.EventJoinRepository;
 import com.example.syntaxappproject.R;
 
 import java.util.ArrayList;
@@ -104,17 +106,37 @@ public class HomeFragment extends HomeBar {
     }
     private void setEventsList() {
 
-        entrantHomeRepo.getEvents(new EntrantHomeRepository.EventCallback() {
+        AuthenticationService authService = new AuthenticationService();
+        EventJoinRepository joinRepo = new EventJoinRepository();
+        String uid = authService.getCurrentUserId();
 
-            @Override
-            public void onSuccess(List<EventDetail> events) {
-                eventsList = events;
-                adapter.updateList(events);
+        entrantHomeRepo.getEvents(events -> {
+
+            List<EventDetail> filtered = new ArrayList<>();
+
+            for (EventDetail event : events) {
+
+                joinRepo.hasJoined(event.eventId, uid, joined -> {
+
+                    if (!joined) {
+                        filtered.add(event);
+                    }
+
+                    if (filtered.size() + 1 == events.size()) {
+                        requireActivity().runOnUiThread(() ->
+                                adapter.updateList(filtered));
+                    }
+
+                });
+
             }
+
         });
     }
 
     private void openEventDetail(EventDetail event) {
+
+        Log.d("HomeFragment", "Event ID being passed: " + event.eventId);
 
         EventDetailFragment fragment = new EventDetailFragment();
 

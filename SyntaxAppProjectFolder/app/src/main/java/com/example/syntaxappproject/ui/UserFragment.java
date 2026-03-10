@@ -49,7 +49,9 @@ public class UserFragment extends HomeBar {
         });
 
         view.findViewById(R.id.eventHistoryButton).setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Event History coming soon", Toast.LENGTH_SHORT).show());
+                androidx.navigation.fragment.NavHostFragment
+                        .findNavController(this)
+                        .navigate(R.id.eventHistoryFragment));
 
         nameText.setText("Loading...");
         emailText.setText("Loading...");

@@ -27,7 +27,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="20dp"
         app:cardBackgroundColor="#2ECC71"
         app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
@@ -128,10 +128,10 @@
                     <Button
                         android:id="@+id/joinButton"
                         android:layout_width="wrap_content"
-                        android:paddingHorizontal="20dp"
                         android:layout_height="50dp"
                         android:layout_gravity="end"
                         android:backgroundTint="#2ECC71"
+                        android:paddingHorizontal="20dp"
                         android:text="Join"
                         android:textSize="24sp" />
                 </LinearLayout>
@@ -146,19 +146,10 @@
         android:layout_height="60dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/back_button_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/back_button" />
-
-    <include
-        android:id="@+id/homebarFragment"
-        layout="@layout/fragment_home_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
