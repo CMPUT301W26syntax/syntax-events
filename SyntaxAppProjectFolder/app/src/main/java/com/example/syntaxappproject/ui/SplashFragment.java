@@ -41,11 +41,14 @@ public class SplashFragment extends Fragment {
                         NavController navController =
                                 NavHostFragment.findNavController(this);
 
-                        if (profile != null) {
-                            navController.navigate(R.id.action_splash_to_home);
-                        } else {
+                        if (profile == null) {
                             navController.navigate(R.id.action_splash_to_profile);
+                        } else if ("Admin".equals(profile.role)) {
+                        navController.navigate(R.id.action_splash_to_admin);
+                        } else {
+                            navController.navigate(R.id.action_splash_to_home);
                         }
+
                     });
                 });
             });
