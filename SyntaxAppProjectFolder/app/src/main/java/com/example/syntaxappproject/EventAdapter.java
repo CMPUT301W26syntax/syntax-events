@@ -54,10 +54,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
 
         EventDetail event = events.get(position);
 
-        holder.eventName.setText(event.title);
+        holder.eventName.setText(event.getName());
 
         Glide.with(holder.itemView.getContext())
-                .load(event.poster)
+                .load(event.getPoster())
                 .into(holder.eventImage);
 
         holder.itemView.setOnClickListener(v -> listener.onItemClick(event));
