@@ -11,6 +11,8 @@ kotlin = "2.3.10"
 coreKtx = "1.17.0"
 firebaseAuth = "24.0.1"
 firebaseFirestore = "26.1.0"
+cardview = "1.0.0"
+recyclerview = "1.4.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -23,6 +25,8 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
