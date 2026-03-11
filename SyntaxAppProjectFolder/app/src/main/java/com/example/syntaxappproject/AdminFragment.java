@@ -34,6 +34,13 @@ public class AdminFragment extends Fragment {
             NavHostFragment.findNavController(this)
                     .navigate(R.id.adminBrowseEvents);
         });
+
+        Button browseImagesButton = view.findViewById(R.id.btn_browse_images);
+
+        browseImagesButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.adminBrowseImages);
+        });
         return view;
     }
 }
