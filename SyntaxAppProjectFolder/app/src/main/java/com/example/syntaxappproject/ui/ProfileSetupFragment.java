@@ -1,14 +1,13 @@
 package com.example.syntaxappproject.ui;
 
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -16,59 +15,91 @@ import com.example.syntaxappproject.AuthenticationService;
 import com.example.syntaxappproject.Profile;
 import com.example.syntaxappproject.ProfileRepository;
 import com.example.syntaxappproject.R;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class ProfileSetupFragment extends Fragment {
 
-    public ProfileSetupFragment() {
-        super(R.layout.fragment_profile_setup);
+    private boolean isEntrant   = true;
+    private boolean isOrganizer = false;
+
+    private MaterialButton entrantButton;
+    private MaterialButton organizerButton;
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_profile_setup, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button entrantButton = view.findViewById(R.id.entrantButton);
-        Button organizerButton = view.findViewById(R.id.organizerButton);
-        Button confirmButton = view.findViewById(R.id.confirmButton);
+        entrantButton   = view.findViewById(R.id.entrantButton);
+        organizerButton = view.findViewById(R.id.organizerButton);
 
-        EditText firstName = view.findViewById(R.id.firstNameInput);
-        EditText lastName = view.findViewById(R.id.lastNameInput);
-        EditText email = view.findViewById(R.id.emailInput);
-        EditText phone = view.findViewById(R.id.phoneInput);
+        TextInputEditText firstName = view.findViewById(R.id.firstNameInput);
+        TextInputEditText lastName  = view.findViewById(R.id.lastNameInput);
+        TextInputEditText email     = view.findViewById(R.id.emailInput);
+        TextInputEditText phone     = view.findViewById(R.id.phoneInput);
 
-        boolean[] isEntrant = {true};
-        boolean[] isOrganizer = {false};
+        View headerTitle   = view.findViewById(R.id.headerTitle);
+        View headerSub     = view.findViewById(R.id.headerSubtitle);
+        View roleCard      = view.findViewById(R.id.roleCard);
+        View nameCard      = view.findViewById(R.id.nameCard);
+        View contactCard   = view.findViewById(R.id.contactCard);
+        View confirmCard   = view.findViewById(R.id.confirmCard);
 
-        // Default state
-        entrantButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2ECC71")));
-        entrantButton.setTextColor(Color.WHITE);
-        organizerButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D3D3D3")));
-        organizerButton.setTextColor(Color.BLACK);
+        // --- Entrance Animations ---
+        headerTitle.setTranslationY(-20f);
+        headerTitle.animate().alpha(1f).translationY(0f)
+                .setDuration(400).setStartDelay(100).start();
+
+        headerSub.animate().alpha(1f)
+                .setDuration(300).setStartDelay(200).start();
+
+        roleCard.setTranslationY(30f);
+        roleCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(250).start();
+
+        nameCard.setTranslationY(30f);
+        nameCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(350).start();
+
+        contactCard.setTranslationY(30f);
+        contactCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(440).start();
+
+        confirmCard.setTranslationY(30f);
+        confirmCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(520).start();
+
+        // --- Role toggles ---
+        updateRoleButtons();
 
         entrantButton.setOnClickListener(v -> {
-            isEntrant[0] = !isEntrant[0];
-            entrantButton.setBackgroundTintList(ColorStateList.valueOf(
-                    Color.parseColor(isEntrant[0] ? "#2ECC71" : "#D3D3D3")));
-            entrantButton.setTextColor(isEntrant[0] ? Color.WHITE : Color.BLACK);
+            isEntrant = !isEntrant;
+            updateRoleButtons();
         });
 
         organizerButton.setOnClickListener(v -> {
-            isOrganizer[0] = !isOrganizer[0];
-            organizerButton.setBackgroundTintList(ColorStateList.valueOf(
-                    Color.parseColor(isOrganizer[0] ? "#2ECC71" : "#D3D3D3")));
-            organizerButton.setTextColor(isOrganizer[0] ? Color.WHITE : Color.BLACK);
+            isOrganizer = !isOrganizer;
+            updateRoleButtons();
         });
 
-        confirmButton.setOnClickListener(v -> {
-            if (!isEntrant[0] && !isOrganizer[0]) {
+        // --- Confirm ---
+        view.findViewById(R.id.confirmButton).setOnClickListener(v -> {
+            if (!isEntrant && !isOrganizer) {
                 Toast.makeText(requireContext(), "Please select at least one role", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String firstNameVal = firstName.getText().toString().trim();
-            String lastNameVal = lastName.getText().toString().trim();
-            String emailVal = email.getText().toString().trim();
-            String phoneVal = phone.getText().toString().trim();
+            String firstNameVal = firstName.getText() != null ? firstName.getText().toString().trim() : "";
+            String lastNameVal  = lastName.getText()  != null ? lastName.getText().toString().trim()  : "";
+            String emailVal     = email.getText()     != null ? email.getText().toString().trim()     : "";
+            String phoneVal     = phone.getText()     != null ? phone.getText().toString().trim()     : "";
 
             if (firstNameVal.isEmpty() || emailVal.isEmpty()) {
                 Toast.makeText(requireContext(), "Name and Email are required", Toast.LENGTH_SHORT).show();
@@ -86,19 +117,21 @@ public class ProfileSetupFragment extends Fragment {
                 }
 
                 String uid = authService.getCurrentUserId();
-                String fullName = firstNameVal + " " + lastNameVal;
+                String fullName = firstNameVal + (lastNameVal.isEmpty() ? "" : " " + lastNameVal);
 
                 Profile profile = new Profile(
-                        fullName, emailVal, phoneVal.isEmpty() ? null : phoneVal,
-                        isEntrant[0], isOrganizer[0], true, uid);
+                        fullName, emailVal,
+                        phoneVal.isEmpty() ? null : phoneVal,
+                        isEntrant, isOrganizer, true, uid);
 
-                profileRepo.getProfile(uid, existingProfile -> {
-                    if (existingProfile != null) {
+                profileRepo.getProfile(uid, existing -> {
+                    if (existing != null) {
                         profileRepo.updateProfile(uid, profile, saved -> {
                             if (!isAdded()) return;
                             requireActivity().runOnUiThread(() -> {
                                 if (saved) {
-                                    NavHostFragment.findNavController(this).navigate(R.id.userFragment);
+                                    NavHostFragment.findNavController(this)
+                                            .navigate(R.id.userFragment);
                                     Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(requireContext(), "Update failed", Toast.LENGTH_SHORT).show();
@@ -115,7 +148,8 @@ public class ProfileSetupFragment extends Fragment {
                                             .edit()
                                             .putBoolean("isLoggedIn", true)
                                             .apply();
-                                    NavHostFragment.findNavController(this).navigate(R.id.action_profile_to_home);
+                                    NavHostFragment.findNavController(this)
+                                            .navigate(R.id.action_profile_to_home);
                                 } else {
                                     Toast.makeText(requireContext(), "Failed to save profile", Toast.LENGTH_SHORT).show();
                                 }
@@ -125,5 +159,19 @@ public class ProfileSetupFragment extends Fragment {
                 });
             });
         });
+    }
+
+    private void updateRoleButtons() {
+        entrantButton.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(
+                        android.graphics.Color.parseColor(isEntrant ? "#2ECC71" : "#F0F0F0")));
+        entrantButton.setTextColor(
+                android.graphics.Color.parseColor(isEntrant ? "#FFFFFF" : "#1A1A1A"));
+
+        organizerButton.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(
+                        android.graphics.Color.parseColor(isOrganizer ? "#2ECC71" : "#F0F0F0")));
+        organizerButton.setTextColor(
+                android.graphics.Color.parseColor(isOrganizer ? "#FFFFFF" : "#1A1A1A"));
     }
 }

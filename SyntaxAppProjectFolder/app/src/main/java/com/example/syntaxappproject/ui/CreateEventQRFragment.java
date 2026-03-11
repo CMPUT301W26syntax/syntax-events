@@ -1,7 +1,6 @@
 package com.example.syntaxappproject.ui;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.navigation.Navigation;
 
 import com.example.syntaxappproject.QRCodeService;
@@ -47,30 +45,56 @@ public class CreateEventQRFragment extends HomeBar {
         }
 
         TextView successText = view.findViewById(R.id.success_text);
-        ImageView qrPreview = view.findViewById(R.id.event_qr_preview);
+        ImageView qrPreview  = view.findViewById(R.id.event_qr_preview);
+        View headerTitle     = view.findViewById(R.id.headerTitle);
+        View qrCard          = view.findViewById(R.id.qrCard);
+        View actionsCard     = view.findViewById(R.id.actionsCard);
 
+        // --- Entrance Animations ---
+        headerTitle.setTranslationY(-20f);
+        headerTitle.animate().alpha(1f).translationY(0f)
+                .setDuration(400).setStartDelay(100).start();
+
+        qrCard.setTranslationY(30f);
+        qrCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(250).start();
+
+        actionsCard.setTranslationY(30f);
+        actionsCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(380).start();
+
+        // --- Generate QR off main thread ---
         if (eventId != null) {
-            if (successText != null) {
-                successText.setText("Event created!");
-            }
-            // Generate QR code based on eventId
-            qrBitmap = QRCodeService.generateQRCode(eventId);
-            if (qrPreview != null && qrBitmap != null) {
-                qrPreview.setImageBitmap(qrBitmap);
-            }
+            if (successText != null) successText.setText(eventId + " successfully created!");
+
+            new Thread(() -> {
+                Bitmap bitmap = QRCodeService.generateQRCode(eventId);
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    qrBitmap = bitmap;
+                    if (qrPreview != null && bitmap != null) {
+                        qrPreview.setImageBitmap(bitmap);
+                    }
+                });
+            }).start();
         }
 
-        view.findViewById(R.id.back_button).setOnClickListener(v -> 
-            Navigation.findNavController(v).popBackStack()
-        );
 
-        view.findViewById(R.id.download_button).setOnClickListener(v -> downloadQRCode());}
+        view.findViewById(R.id.download_button).setOnClickListener(v -> downloadQRCode());
+
+        view.findViewById(R.id.done_button).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_createEventQRFragment_to_homeFragment)
+        );
+    }
 
     private void downloadQRCode() {
-        if (qrBitmap == null) return;
+        if (qrBitmap == null) {
+            Toast.makeText(getContext(), "QR code not ready yet", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         String filename = "QR_" + eventId + ".png";
-        OutputStream fos;
+        OutputStream fos = null;
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -79,19 +103,21 @@ public class CreateEventQRFragment extends HomeBar {
                 contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/SyntaxEvents");
 
-                Uri imageUri = requireContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                fos = requireContext().getContentResolver().openOutputStream(imageUri);
+                Uri imageUri = requireContext().getContentResolver()
+                        .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                if (imageUri != null) {
+                    fos = requireContext().getContentResolver().openOutputStream(imageUri);
+                }
             } else {
                 File imagesDir = new File(requireContext().getExternalFilesDir(null), "SyntaxEvents");
                 if (!imagesDir.exists()) imagesDir.mkdirs();
-                File image = new File(imagesDir, filename);
-                fos = new FileOutputStream(image);
+                fos = new FileOutputStream(new File(imagesDir, filename));
             }
 
             if (fos != null) {
                 qrBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                 fos.close();
-                Toast.makeText(getContext(), "QR Code downloaded to Pictures", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "QR Code saved to Pictures", Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             e.printStackTrace();
