@@ -23,7 +23,12 @@ import java.util.Map;
 public class QRCodeService {
     private static String openAppString = "syntaxappproject://open";
 
-    public static BitMatrix makeQRCodeMatrix(String deep_link) {
+    public static Bitmap generateQRCode (String deep_link) {
+        BitMatrix matrix = makeQRCodeMatrix(deep_link);
+        return toBitmap(matrix);
+    }
+
+    private static BitMatrix makeQRCodeMatrix(String deep_link) {
         // Code mostly from https://lknuth.dev/writings/generating_qrcodes_with_zxing/
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix matrix = null;
@@ -38,7 +43,7 @@ public class QRCodeService {
     }
 
     // Code from https://lknuth.dev/writings/generating_qrcodes_with_zxing/
-    public static Bitmap toBitmap(BitMatrix matrix){
+    private static Bitmap toBitmap(BitMatrix matrix){
         int height = matrix.getHeight();
         int width = matrix.getWidth();
         Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
@@ -50,7 +55,7 @@ public class QRCodeService {
         return bmp;
     }
 
-    public static String decodeQRCode(Bitmap bMap) {
+    private static String decodeQRCode(Bitmap bMap) {
         String contents = null;
 
         // 1. Convert the Bitmap into an int array of pixels
@@ -76,9 +81,6 @@ public class QRCodeService {
         return contents;
     }
 
-    public static Bitmap TestQRCode() {
-        return toBitmap(makeQRCodeMatrix(openAppString));
-    }
 
 
     // Will be used later in development for storing QR codes
