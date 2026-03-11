@@ -20,20 +20,8 @@ public class EventDetailRepository {
         detailRef.get().addOnSuccessListener(documentSnapshot -> {
 
             if (documentSnapshot.exists()) {
-                String eventName = documentSnapshot.getString("name");
-                String description = documentSnapshot.getString("description");
-                String startingEventDateDate = documentSnapshot.getString("startingEventDate");
-                String endingEventDateDate = documentSnapshot.getString("endingEventDate");
-                String location = documentSnapshot.getString("location");
-                String startingRegistrationPeriod = documentSnapshot.getString("startingRegistrationPeriod");
-                String endingRegistrationPeriod = documentSnapshot.getString("endingRegistrationPeriod");
-                Long capacity = documentSnapshot.getLong("capacity");
-                boolean geoReq = Boolean.TRUE.equals(documentSnapshot.getBoolean("geoReq"));
-                String waitlistCount = documentSnapshot.getString("waitlistCount");
-                String lotteryCriteria = documentSnapshot.getString("lotteryCriteria");
-                String poster = documentSnapshot.getString("poster");
-                event = new EventDetail(eventId, eventName, description, location, capacity, geoReq, startingEventDateDate,
-                        endingEventDateDate, startingRegistrationPeriod,endingRegistrationPeriod, waitlistCount, lotteryCriteria, poster);
+
+                event = documentSnapshot.toObject(EventDetail.class);
                 callback.onEventLoaded(event);
             }
         });

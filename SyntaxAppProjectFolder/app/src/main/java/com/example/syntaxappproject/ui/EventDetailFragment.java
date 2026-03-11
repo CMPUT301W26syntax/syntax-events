@@ -78,8 +78,8 @@ public class EventDetailFragment extends Fragment {
             regiPeriod.setText("Registration Period: " + event.getStartingRegistrationPeriod());
             capacity.setText("Capacity: " + event.getCapacity());
             wLCount.setText("Waiting List Count: " + event.getWaitlistCount());
-            //lotteryCriteria.setText("Lottery Criteria: " + event.lotteryCriteria);
-            lotteryCriteria.setText("test");
+            lotteryCriteria.setText("Lottery Criteria: " + event.getLotteryCriteria());
+
         });
 
         joinButton.setOnClickListener(v -> {
