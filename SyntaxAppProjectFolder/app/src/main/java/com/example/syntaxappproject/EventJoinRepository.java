@@ -1,6 +1,7 @@
 package com.example.syntaxappproject;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -30,6 +31,9 @@ public class EventJoinRepository {
     }
 
     public void leaveEvent(String eventId, String userId, JoinCallback callback) {
+        db.collection("events")
+                .document(eventId)
+                .update("waitlistCount", FieldValue.increment(-1));
 
         db.collection("events")
                 .document(eventId)
@@ -48,6 +52,10 @@ public class EventJoinRepository {
 
         Map<String, Object> data = new HashMap<>();
         data.put("joinedAt", Timestamp.now());
+
+        db.collection("events")
+                .document(eventId)
+                .update("waitlistCount", FieldValue.increment(1));
 
         db.collection("events")
                 .document(eventId)
