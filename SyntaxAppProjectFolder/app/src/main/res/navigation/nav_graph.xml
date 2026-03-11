@@ -26,6 +26,7 @@
         <action android:id="@+id/toQrCodeScannerFragment" app:destination="@id/QRCodeScannerFragment"/>
         <action android:id="@+id/toNotificationFragment" app:destination="@id/notificationFragment"/>
         <action android:id="@+id/toCreateEventFragment" app:destination="@id/createEventFragment"/>
+        <action android:id="@+id/toEventDetailFragment" app:destination="@id/eventDetailFragment"/>
     </fragment>
 
 
@@ -52,6 +53,7 @@
         <action android:id="@+id/toQrCodeScannerFragment" app:destination="@id/QRCodeScannerFragment"/>
         <action android:id="@+id/toNotificationFragment" app:destination="@id/notificationFragment"/>
         <action android:id="@+id/toOrganizerEventsFragment" app:destination="@id/organizerEventsFragment"/>
+        <action android:id="@+id/toEventDetailFragment" app:destination="@id/eventDetailFragment"/>
     </fragment>
 
     <fragment
@@ -85,6 +87,7 @@
         <action android:id="@+id/toUserFragment" app:destination="@id/userFragment"/>
         <action android:id="@+id/toQrCodeScannerFragment" app:destination="@id/QRCodeScannerFragment"/>
         <action android:id="@+id/toNotificationFragment" app:destination="@id/notificationFragment"/>
+        <action android:id="@+id/toEventDetailFragment" app:destination="@id/eventDetailFragment"/>
     </fragment>
 
     <fragment
@@ -112,6 +115,7 @@
         <action android:id="@+id/toUserFragment" app:destination="@id/userFragment"/>
         <action android:id="@+id/toQrCodeScannerFragment" app:destination="@id/QRCodeScannerFragment"/>
         <action android:id="@+id/toNotificationFragment" app:destination="@id/notificationFragment"/>
+        <action android:id="@+id/toEventDetailFragment" app:destination="@id/eventDetailFragment"/>
     </fragment>
 
     <fragment
@@ -133,6 +137,27 @@
         <action android:id="@+id/toUserFragment" app:destination="@id/userFragment"/>
         <action android:id="@+id/toQrCodeScannerFragment" app:destination="@id/QRCodeScannerFragment"/>
         <action android:id="@+id/toNotificationFragment" app:destination="@id/notificationFragment"/>
+        <action
+            android:id="@+id/toCreateEventQRFragment"
+            app:destination="@id/CreateEventQRFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/eventDetailFragment"
+        android:name="com.example.syntaxappproject.ui.EventDetailFragment"
+        android:label="Event Detail">
+        <argument
+            android:name="eventId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CreateEventQRFragment"
+        android:name="com.example.syntaxappproject.ui.CreateEventQRFragment"
+        android:label="QR Step">
+        <argument
+            android:name="eventId"
+            app:argType="string" />
     </fragment>
 
 </navigation>

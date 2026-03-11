@@ -85,10 +85,10 @@ public class QRCodeScannerFragment extends HomeBar {
         public void barcodeResult(BarcodeResult result) {
             String qrText = result.getText();
             if (qrText != null) {
+                barcodeView.pause(); // Stop scanning once we have a result
                 Bundle bundle = new Bundle();
-                bundle.putString("QR_TEXT", qrText);
-                getParentFragmentManager().setFragmentResult("QR_RESULT", bundle);
-                Navigation.findNavController(requireView()).popBackStack();
+                bundle.putString("eventId", qrText);
+                Navigation.findNavController(requireView()).navigate(R.id.toEventDetailFragment, bundle);
             }
         }
     };
