@@ -1,155 +1,325 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/eventDetailFragmentLayout">
+    android:background="#F5F5F5">
 
+    <!-- Header -->
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="187dp"
-        android:layout_height="81dp"
+        android:id="@+id/headerTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
+        android:alpha="0"
         android:fontFamily="serif"
-        android:text="Detail"
-        android:textAlignment="center"
-        android:textSize="60sp"
+        android:text="Event Detail"
+        android:textColor="#1A1A1A"
+        android:textSize="48sp"
         android:textStyle="bold"
-        android:typeface="normal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Back button -->
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/eventDetailBackButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:alpha="0"
+        android:background="@drawable/bg_green_circle"
+        android:padding="12dp"
+        android:scaleType="centerInside"
+        android:src="@android:drawable/ic_menu_revert"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.058" />
+        app:tint="#FFFFFF" />
 
-    <com.google.android.material.card.MaterialCardView
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="20dp"
-        app:cardBackgroundColor="#2ECC71"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/homebarFragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@id/headerTitle">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Poster card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/posterCard"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:alpha="0"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
+
+                <ImageView
+                    android:id="@+id/eventPoster"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:scaleType="centerCrop" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Name + join card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/nameCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:alpha="0"
                 app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="20dp">
 
+                    <TextView
+                        android:id="@+id/eventName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Event Name"
+                        android:textColor="#1A1A1A"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
 
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:id="@+id/eventPoster"
-                                android:layout_width="match_parent"
-                                android:layout_height="180dp"
-                                android:scaleType="centerCrop"
-                                tools:srcCompat="@tools:sample/avatars" />
-
-                            <TextView
-                                android:id="@+id/eventName"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Event Name" />
-
-
-                            <TextView
-                                android:id="@+id/eventDescription"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Description:\nText" />
-
-                            <TextView
-                                android:id="@+id/eventDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Date: YY/MM/DD" />
-
-                            <TextView
-                                android:id="@+id/eventLocation"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Location: Text" />
-
-                            <TextView
-                                android:id="@+id/eventRegiPeriod"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Registration Period: YY/MM/DD" />
-
-                            <TextView
-                                android:id="@+id/eventCapacity"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Capacity: 0" />
-
-                            <TextView
-                                android:id="@+id/eventWLCount"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Waiting List Count: 0" />
-
-                            <TextView
-                                android:id="@+id/eventLotteryCriteria"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Lottery Criteria: Text" />
-                        </LinearLayout>
-                    </ScrollView>
-
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/joinButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:layout_gravity="end"
+                        android:layout_height="48dp"
                         android:backgroundTint="#2ECC71"
-                        android:paddingHorizontal="20dp"
                         android:text="Join"
-                        android:textSize="24sp" />
+                        android:textColor="@android:color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Details card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/detailsCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:alpha="0"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:letterSpacing="0.1"
+                        android:text="DETAILS"
+                        android:textColor="#2ECC71"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <!-- Description -->
+                    <TextView
+                        android:id="@+id/eventDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="Description"
+                        android:textColor="#444444"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="#F0F0F0" />
+
+                    <!-- Date row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@android:drawable/ic_menu_my_calendar"
+                            app:tint="#2ECC71" />
+
+                        <TextView
+                            android:id="@+id/eventDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Date"
+                            android:textColor="#1A1A1A"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <!-- Location row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@android:drawable/ic_menu_mylocation"
+                            app:tint="#2ECC71" />
+
+                        <TextView
+                            android:id="@+id/eventLocation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Location"
+                            android:textColor="#1A1A1A"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <!-- Registration period row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@android:drawable/ic_menu_agenda"
+                            app:tint="#2ECC71" />
+
+                        <TextView
+                            android:id="@+id/eventRegiPeriod"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Registration Period"
+                            android:textColor="#1A1A1A"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <!-- Capacity row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@android:drawable/ic_menu_manage"
+                            app:tint="#2ECC71" />
+
+                        <TextView
+                            android:id="@+id/eventCapacity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Capacity"
+                            android:textColor="#1A1A1A"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <!-- Waitlist row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@android:drawable/ic_menu_sort_by_size"
+                            app:tint="#2ECC71" />
+
+                        <TextView
+                            android:id="@+id/eventWLCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Waitlist Count"
+                            android:textColor="#1A1A1A"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <!-- Lottery criteria row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@android:drawable/ic_menu_info_details"
+                            app:tint="#2ECC71" />
+
+                        <TextView
+                            android:id="@+id/eventLotteryCriteria"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lottery Criteria"
+                            android:textColor="#1A1A1A"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
 
-    <ImageButton
-        android:id="@+id/eventDetailBackButton"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/back_button_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/back_button" />
-
+    <include
+        android:id="@+id/homebarFragment"
+        layout="@layout/fragment_home_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

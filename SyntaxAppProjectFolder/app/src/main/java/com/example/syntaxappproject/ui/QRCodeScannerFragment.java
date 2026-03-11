@@ -40,9 +40,29 @@ public class QRCodeScannerFragment extends HomeBar {
         capture.decode();
         barcodeView.decodeContinuous(callback);
 
+        View backButton      = view.findViewById(R.id.back_button);
+        View flashButton     = view.findViewById(R.id.flashlight_button);
+        View instructionText = view.findViewById(R.id.instructionText);
+        View flashLabel      = view.findViewById(R.id.flashlightLabel);
+
+        backButton.setTranslationX(-60f);
+        backButton.animate().alpha(1f).translationX(0f)
+                .setDuration(400).setStartDelay(100).start();
+
+        instructionText.setTranslationY(-20f);
+        instructionText.animate().alpha(1f).translationY(0f)
+                .setDuration(400).setStartDelay(200).start();
+
+        flashButton.setTranslationY(40f);
+        flashButton.animate().alpha(1f).translationY(0f)
+                .setDuration(400).setStartDelay(300).start();
+
+        flashLabel.animate().alpha(1f)
+                .setDuration(300).setStartDelay(450).start();
+
         // Flashlight button logic
-        FloatingActionButton flashButton = view.findViewById(R.id.flashlight_button);
-        flashButton.setOnClickListener(v -> {
+        FloatingActionButton fab = view.findViewById(R.id.flashlight_button);
+        fab.setOnClickListener(v -> {
             if(flashlightOn) {
                 flashlightOn = false;
                 barcodeView.setTorchOff();
@@ -52,8 +72,9 @@ public class QRCodeScannerFragment extends HomeBar {
             }
         });
 
-        FloatingActionButton backButton = view.findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
+        view.findViewById(R.id.back_button).setOnClickListener(v ->
+                Navigation.findNavController(v).popBackStack()
+        );
     }
 
     @Override

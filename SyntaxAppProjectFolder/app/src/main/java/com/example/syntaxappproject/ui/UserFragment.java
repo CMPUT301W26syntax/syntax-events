@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.syntaxappproject.AuthenticationService;
 import com.example.syntaxappproject.Profile;
@@ -17,9 +18,10 @@ import com.example.syntaxappproject.R;
 
 public class UserFragment extends HomeBar {
 
-    private ProfileRepository profileRepo;
-    private AuthenticationService authService;
-    private TextView nameText, emailText, phoneText;
+    private final ProfileRepository profileRepo = new ProfileRepository();
+    private final AuthenticationService authService = new AuthenticationService();
+
+    private TextView nameText, emailText, phoneText, emailDetailText, avatarInitial;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,31 +33,43 @@ public class UserFragment extends HomeBar {
         super.onViewCreated(view, savedInstanceState);
         setupHotbar(view);
 
-        profileRepo = new ProfileRepository();
-        authService = new AuthenticationService();
+        nameText        = view.findViewById(R.id.profileName);
+        emailText       = view.findViewById(R.id.profileEmail);
+        phoneText       = view.findViewById(R.id.profilePhone);
+        emailDetailText = view.findViewById(R.id.profileEmailDetail);
+        avatarInitial   = view.findViewById(R.id.avatarInitial);
 
-        nameText = view.findViewById(R.id.profileName);
-        emailText = view.findViewById(R.id.profileEmail);
-        phoneText = view.findViewById(R.id.profilePhone);
+        View headerTitle  = view.findViewById(R.id.headerTitle);
+        View avatarCard   = view.findViewById(R.id.avatarCard);
+        View detailsCard  = view.findViewById(R.id.detailsCard);
+        View actionsCard  = view.findViewById(R.id.actionsCard);
 
-        view.findViewById(R.id.personalizationButton).setOnClickListener(v -> {
-            authService.signInAnonymously(success -> {
-                if (success) {
-                    androidx.navigation.fragment.NavHostFragment.findNavController(this).navigate(R.id.editProfileFragment);
-                } else {
-                    Toast.makeText(requireContext(), "Login required", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+        // --- Entrance Animations ---
+        headerTitle.setTranslationY(-20f);
+        headerTitle.animate().alpha(1f).translationY(0f)
+                .setDuration(400).setStartDelay(100).start();
+
+        avatarCard.setTranslationY(30f);
+        avatarCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(200).start();
+
+        detailsCard.setTranslationY(30f);
+        detailsCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(320).start();
+
+        actionsCard.setTranslationY(30f);
+        actionsCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(420).start();
+
+        // --- Button listeners ---
+        view.findViewById(R.id.personalizationButton).setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.editProfileFragment)
+        );
 
         view.findViewById(R.id.eventHistoryButton).setOnClickListener(v ->
-                androidx.navigation.fragment.NavHostFragment
-                        .findNavController(this)
-                        .navigate(R.id.eventHistoryFragment));
+                NavHostFragment.findNavController(this).navigate(R.id.eventHistoryFragment)
+        );
 
-        nameText.setText("Loading...");
-        emailText.setText("Loading...");
-        phoneText.setText("Loading...");
         loadProfile();
     }
 
@@ -69,12 +83,24 @@ public class UserFragment extends HomeBar {
     }
 
     private void displayProfile(Profile profile) {
-        if (profile != null && isAdded()) {
-            requireActivity().runOnUiThread(() -> {
-                nameText.setText(profile.getName());
-                emailText.setText(profile.getEmail());
-                phoneText.setText(profile.getPhone() != null ? profile.getPhone() : "No phone set");
-            });
-        }
+        if (profile == null || !isAdded()) return;
+
+        requireActivity().runOnUiThread(() -> {
+            String name  = profile.getName()  != null ? profile.getName()  : "No name set";
+            String email = profile.getEmail() != null ? profile.getEmail() : "No email set";
+            String phone = profile.getPhone() != null ? profile.getPhone() : "No phone set";
+
+            nameText.setText(name);
+            emailText.setText(email);
+            emailDetailText.setText(email);
+            phoneText.setText(phone);
+
+            // Set avatar initial from first letter of name
+            if (profile.getName() != null && !profile.getName().isEmpty()) {
+                avatarInitial.setText(
+                        String.valueOf(profile.getName().charAt(0)).toUpperCase()
+                );
+            }
+        });
     }
 }
