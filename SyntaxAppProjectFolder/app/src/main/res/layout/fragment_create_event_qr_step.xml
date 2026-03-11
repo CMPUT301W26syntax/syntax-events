@@ -75,10 +75,9 @@
 
     <LinearLayout
         android:id="@+id/button_container"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:layout_marginHorizontal="16dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="@id/green_box"
         app:layout_constraintEnd_toEndOf="@id/green_box"
@@ -86,10 +85,8 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/download_button"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="4dp"
             android:backgroundTint="#1FC954"
             android:text="Download"
             android:textColor="@android:color/white"
@@ -99,20 +96,6 @@
             app:iconPadding="4dp"
             app:iconSize="18dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/share_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:backgroundTint="#1FC954"
-            android:text="Share"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            app:icon="@drawable/ic_share"
-            app:iconGravity="textStart"
-            app:iconPadding="4dp"
-            app:iconSize="18dp" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline

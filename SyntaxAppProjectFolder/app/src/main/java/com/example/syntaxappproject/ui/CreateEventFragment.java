@@ -141,11 +141,7 @@ public class CreateEventFragment extends HomeBar {
                 viewModel.setLocation(locationText);
                 viewModel.setCapacity(capacityInt);
 
-                navController.navigate(R.id.toNotificationFragment);
-
-
-
-
+                navController.navigate(R.id.toUploadImageFragment);
             }
         });
     }
