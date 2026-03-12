@@ -119,10 +119,26 @@ public class ProfileSetupFragment extends Fragment {
                 String uid = authService.getCurrentUserId();
                 String fullName = firstNameVal + (lastNameVal.isEmpty() ? "" : " " + lastNameVal);
 
+
+                String role;
+                if (isOrganizer) {
+                    role = "Organizer";
+                } else if (isEntrant) {
+                    role = "Entrant";
+                } else {
+                    role = "None";
+                }
+
                 Profile profile = new Profile(
-                        fullName, emailVal,
+                        fullName,
+                        emailVal,
                         phoneVal.isEmpty() ? null : phoneVal,
-                        isEntrant, isOrganizer, true, uid);
+                        role,
+                        isEntrant,
+                        isOrganizer,
+                        true,
+                        uid
+                );
 
                 profileRepo.getProfile(uid, existing -> {
                     if (existing != null) {

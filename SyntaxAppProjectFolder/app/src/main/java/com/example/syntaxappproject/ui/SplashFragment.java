@@ -18,6 +18,10 @@ import com.google.android.material.button.MaterialButton;
 
 public class SplashFragment extends Fragment {
 
+    public SplashFragment() {
+        super(R.layout.fragment_splash);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -29,12 +33,11 @@ public class SplashFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        View titleText         = view.findViewById(R.id.titleText);
-        View titleCard         = view.findViewById(R.id.titleCard);
-        View taglineText       = view.findViewById(R.id.taglineText);
+        View titleText = view.findViewById(R.id.titleText);
+        View titleCard = view.findViewById(R.id.titleCard);
+        View taglineText = view.findViewById(R.id.taglineText);
         MaterialButton enterButton = view.findViewById(R.id.enterButton);
 
-        // --- Entrance Animations ---
         titleCard.setScaleX(0.3f);
         titleCard.setScaleY(0.3f);
         titleCard.animate().alpha(1f).scaleX(1f).scaleY(1f)
@@ -57,20 +60,27 @@ public class SplashFragment extends Fragment {
         enterButton.animate().alpha(1f).translationY(0f)
                 .setDuration(500).setStartDelay(700).start();
 
-        // --- Button logic ---
         enterButton.setOnClickListener(v -> {
             AuthenticationService authService = new AuthenticationService();
+
             authService.signInAnonymously(success -> {
                 if (!success) return;
+
                 String uid = authService.getCurrentUserId();
-                new ProfileRepository().getProfile(uid, profile -> {
+                ProfileRepository profileRepo = new ProfileRepository();
+
+                profileRepo.getProfile(uid, profile -> {
                     if (!isAdded()) return;
+
                     requireActivity().runOnUiThread(() -> {
-                        NavController nav = NavHostFragment.findNavController(this);
-                        if (profile != null) {
-                            nav.navigate(R.id.action_splash_to_home);
+                        NavController navController = NavHostFragment.findNavController(this);
+
+                        if (profile == null) {
+                            navController.navigate(R.id.action_splash_to_profile);
+                        } else if ("Admin".equals(profile.getRole())) {
+                            navController.navigate(R.id.action_splash_to_admin);
                         } else {
-                            nav.navigate(R.id.action_splash_to_profile);
+                            navController.navigate(R.id.action_splash_to_home);
                         }
                     });
                 });

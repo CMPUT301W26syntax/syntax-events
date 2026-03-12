@@ -107,14 +107,24 @@ public class EditProfileFragment extends HomeBar {
             boolean isEntrant   = existing != null && existing.isEntrant();
             boolean isOrganizer = existing != null && existing.isOrganizer();
             boolean notifs      = existing != null && existing.isNotificationsEnabled();
-
+            String role;
+            if (isOrganizer) {
+                role = "Organizer";
+            } else if (isEntrant) {
+                role = "Entrant";
+            } else {
+                role = "None";
+            }
             Profile updated = new Profile(
                     firstName + (lastName.isEmpty() ? "" : " " + lastName),
                     email,
                     phone.isEmpty() ? null : phone,
-                    isEntrant, isOrganizer, notifs, uid
+                    role,
+                    isEntrant,
+                    isOrganizer,
+                    notifs,
+                    uid
             );
-
             profileRepo.updateProfile(uid, updated, success -> {
                 if (!isAdded()) return;
                 requireActivity().runOnUiThread(() -> {
