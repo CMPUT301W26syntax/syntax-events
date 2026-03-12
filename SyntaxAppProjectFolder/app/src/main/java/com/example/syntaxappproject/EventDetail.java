@@ -2,6 +2,8 @@ package com.example.syntaxappproject;
 
 import android.location.Criteria;
 
+import java.util.Map;
+
 public class EventDetail {
     // ─── Identity ─────────────────────────────────────────────────────────────
     private String eventId;
@@ -24,6 +26,8 @@ public class EventDetail {
     // ─── Lottery ──────────────────────────────────────────────────────────────
     private String waitlistCount;
     private String lotteryCriteria;
+    private Map<String, Profile> lotteryWinners;
+
 
     // ─── Media ────────────────────────────────────────────────────────────────
     private String poster;
@@ -34,7 +38,7 @@ public class EventDetail {
     public EventDetail(String eventId, String name, String description, String location, long capacity, boolean geoReq,
                  String startingEventDate, String endingEventDate,
                  String startingRegistrationPeriod, String endingRegistrationPeriod,
-                 String waitlistCount, String lotteryCriteria, String poster) {
+                 String waitlistCount, String lotteryCriteria, String poster, Map<String, Profile> lotteryWinners) {
         this.eventId = eventId;
         this.name = name;
         this.description = description;
@@ -48,6 +52,7 @@ public class EventDetail {
         this.waitlistCount = waitlistCount;
         this.lotteryCriteria = lotteryCriteria;
         this.poster = poster;
+        this.lotteryWinners = lotteryWinners;
     }
 
 

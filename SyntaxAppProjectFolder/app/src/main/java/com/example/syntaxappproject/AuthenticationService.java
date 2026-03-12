@@ -35,4 +35,7 @@ public class AuthenticationService {
     public interface AuthCallback {
         void onComplete(boolean success);
     }
+
+    public static class CSVService {
+    }
 }

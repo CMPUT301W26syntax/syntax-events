@@ -6,6 +6,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
 public class EventDetailRepository {
     private FirebaseFirestore db;
     private DocumentReference detailRef;
@@ -32,8 +36,10 @@ public class EventDetailRepository {
                 String waitlistCount = documentSnapshot.getString("waitlistCount");
                 String lotteryCriteria = documentSnapshot.getString("lotteryCriteria");
                 String poster = documentSnapshot.getString("poster");
+                Map<String, Profile> lotteryWinners = (Map<String, Profile>) documentSnapshot.get("lotteryWinners");
+
                 event = new EventDetail(eventId, eventName, description, location, capacity, geoReq, startingEventDateDate,
-                        endingEventDateDate, startingRegistrationPeriod,endingRegistrationPeriod, waitlistCount, lotteryCriteria, poster);
+                        endingEventDateDate, startingRegistrationPeriod,endingRegistrationPeriod, waitlistCount, lotteryCriteria, poster, lotteryWinners);
                 callback.onEventLoaded(event);
             }
         });
