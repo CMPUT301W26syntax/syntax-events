@@ -1,6 +1,7 @@
 package com.example.syntaxappproject;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -53,6 +54,14 @@ public class EventJoinRepository {
                         callback.onResult(doc.exists()));
     }
 
+    public interface JoinCheckCallback {
+        void onResult(boolean joined);
+    }
+
+    public void leaveEvent(String eventId, String userId, JoinCallback callback) {
+        db.collection("events")
+                .document(eventId)
+                .update("waitlistCount", FieldValue.increment(-1));
     /**
      * Adds a user to the waitlist of the specified event.
      * <p>
@@ -84,6 +93,10 @@ public class EventJoinRepository {
      * @param callback the {@link JoinCallback} invoked with the result
      */
     public void leaveEvent(String eventId, String userId, JoinCallback callback) {
+        db.collection("events")
+                .document(eventId)
+                .update("waitlistCount", FieldValue.increment(1));
+
         db.collection("events")
                 .document(eventId)
                 .collection("waitlist-entrants")
