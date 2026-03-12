@@ -5,6 +5,7 @@ import android.location.Criteria;
 public class EventDetail {
     // ─── Identity ─────────────────────────────────────────────────────────────
     private String eventId;
+    private String organizerUid;
 
     // ─── Event Info ───────────────────────────────────────────────────────────
     private String name;            // title
@@ -61,6 +62,9 @@ public class EventDetail {
     // Name
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public String getOrganizerUid() { return organizerUid; }
+    public void setOrganizerUid(String organizerUid) { this.organizerUid = organizerUid; }
 
     // Description
     public String getDescription() { return description; }
