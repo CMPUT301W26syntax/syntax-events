@@ -129,7 +129,7 @@ public class OrganizerEventsRepositoryTest {
     public void testGetOrganizerEvents_excludesOtherOrganizersEvents() {
         EventDetail e1 = new EventDetail();
         e1.setOrganizerUid("organizer-999");
-        e1.setName(g"Other Event");
+        e1.setName("Other Event");
 
         repo.addEvent(e1);
 
