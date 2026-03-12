@@ -81,6 +81,10 @@ public class CreateEventFragment extends HomeBar {
             String description = getText(descriptionInput);
             String location    = getText(locationInput);
             String capacityStr = getText(capacityInput);
+            String startingEventDate = getText(eventStartDateInput);
+            String endingEventDate = getText(eventEndDateInput);
+            String startingRegistrationPeriod = getText(regisStartDateInput);
+            String endingRegistrationPeriod = getText(regisEndDateInput);
 
             if (name.isEmpty()) {
                 toast("Event name is required"); return;
@@ -105,6 +109,10 @@ public class CreateEventFragment extends HomeBar {
             viewModel.setDescription(description);
             viewModel.setLocation(location);
             viewModel.setCapacity(capacity);
+            viewModel.setStartingEventDate(startingEventDate);
+            viewModel.setEndingEventDate(endingEventDate);
+            viewModel.setStartingRegistrationPeriod(startingRegistrationPeriod);
+            viewModel.setEndingRegistrationPeriod(endingRegistrationPeriod);
 
             navController.navigate(R.id.toUploadImageFragment);
         });

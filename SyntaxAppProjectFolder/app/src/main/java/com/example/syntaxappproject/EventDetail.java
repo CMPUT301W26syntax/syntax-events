@@ -5,6 +5,7 @@ import android.location.Criteria;
 public class EventDetail {
     // ─── Identity ─────────────────────────────────────────────────────────────
     private String eventId;
+    private String organizerUid;
 
     // ─── Event Info ───────────────────────────────────────────────────────────
     private String name;            // title
@@ -22,7 +23,7 @@ public class EventDetail {
     private String endingRegistrationPeriod;
 
     // ─── Lottery ──────────────────────────────────────────────────────────────
-    private String waitlistCount;
+    private long waitlistCount;
     private String lotteryCriteria;
 
     // ─── Media ────────────────────────────────────────────────────────────────
@@ -34,7 +35,7 @@ public class EventDetail {
     public EventDetail(String eventId, String name, String description, String location, long capacity, boolean geoReq,
                  String startingEventDate, String endingEventDate,
                  String startingRegistrationPeriod, String endingRegistrationPeriod,
-                 String waitlistCount, String lotteryCriteria, String poster) {
+                 long waitlistCount, String lotteryCriteria, String poster) {
         this.eventId = eventId;
         this.name = name;
         this.description = description;
@@ -61,6 +62,9 @@ public class EventDetail {
     // Name
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public String getOrganizerUid() { return organizerUid; }
+    public void setOrganizerUid(String organizerUid) { this.organizerUid = organizerUid; }
 
     // Description
     public String getDescription() { return description; }
@@ -104,8 +108,8 @@ public class EventDetail {
     // ─── Lottery ───
 
     // Waitlist Count
-    public String getWaitlistCount() { return waitlistCount; }
-    public void setWaitlistCount(String waitlistCount) { this.waitlistCount = waitlistCount; }
+    public long getWaitlistCount() { return waitlistCount; }
+    public void setWaitlistCount(long waitlistCount) { this.waitlistCount = waitlistCount; }
 
     // Lottery Criteria
     public String getLotteryCriteria() { return lotteryCriteria; }
