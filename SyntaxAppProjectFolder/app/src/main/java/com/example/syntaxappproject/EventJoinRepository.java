@@ -54,14 +54,7 @@ public class EventJoinRepository {
                         callback.onResult(doc.exists()));
     }
 
-    public interface JoinCheckCallback {
-        void onResult(boolean joined);
-    }
 
-    public void leaveEvent(String eventId, String userId, JoinCallback callback) {
-        db.collection("events")
-                .document(eventId)
-                .update("waitlistCount", FieldValue.increment(-1));
     /**
      * Adds a user to the waitlist of the specified event.
      * <p>
