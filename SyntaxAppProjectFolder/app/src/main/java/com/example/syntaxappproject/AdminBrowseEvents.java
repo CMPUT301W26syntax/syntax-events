@@ -24,26 +24,23 @@ public class AdminBrowseEvents extends Fragment {
 
     public AdminBrowseEvents() {
     }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_browse_events, container, false);
-
         RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
         eventList = new ArrayList<>();
         eventIds = new ArrayList<>();
         adapter = new AdminEventAdapter(eventList, eventIds);
-        recyclerView.setAdapter(adapter);
 
+
+        recyclerView.setAdapter(adapter);
         FirebaseFirestore.getInstance()
                 .collection("events")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     eventList.clear();
                     eventIds.clear();
-
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         Event event = doc.toObject(Event.class);
                         if (event != null) {
@@ -51,10 +48,8 @@ public class AdminBrowseEvents extends Fragment {
                             eventIds.add(doc.getId());
                         }
                     }
-
                     adapter.notifyDataSetChanged();
                 });
-
         return view;
     }
 }

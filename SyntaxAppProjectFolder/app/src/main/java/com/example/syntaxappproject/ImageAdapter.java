@@ -23,31 +23,26 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     public ImageAdapter(ArrayList<ImageItem> imageList, ArrayList<String> imageIds) {
         this.imageList = imageList;
         this.imageIds = imageIds;
-    }
+            }
 
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_item, parent, false);
-        return new ImageViewHolder(view);
-    }
+        return new ImageViewHolder(view);}
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         ImageItem item = imageList.get(position);
-
         Glide.with(holder.itemView.getContext())
                 .load(item.imageUrl)
                 .into(holder.imageView);
-
         holder.detailsButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("imageId", imageIds.get(position));
             bundle.putString("imageUrl", item.imageUrl);
             bundle.putString("uploadedBy", item.uploadedBy);
-
-            Navigation.findNavController(v).navigate(R.id.adminImageDetails, bundle);
-        });
+            Navigation.findNavController(v).navigate(R.id.adminImageDetails, bundle);});
     }
 
     @Override

@@ -28,22 +28,18 @@ public class AdminBrowseProfiles extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_browse_profiles, container, false);
-
         RecyclerView recyclerView = view.findViewById(R.id.recycler_profiles);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
         profileList = new ArrayList<>();
         profileIds = new ArrayList<>();
         adapter = new ProfileAdapter(profileList, profileIds);
         recyclerView.setAdapter(adapter);
-
         FirebaseFirestore.getInstance()
                 .collection("profiles")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     profileList.clear();
                     profileIds.clear();
-
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         Profile profile = doc.toObject(Profile.class);
                         if (profile != null) {
@@ -51,10 +47,8 @@ public class AdminBrowseProfiles extends Fragment {
                             profileIds.add(doc.getId());
                         }
                     }
-
                     adapter.notifyDataSetChanged();
                 });
-
         return view;
     }
 }

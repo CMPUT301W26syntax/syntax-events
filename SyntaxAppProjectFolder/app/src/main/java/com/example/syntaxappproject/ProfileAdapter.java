@@ -33,11 +33,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     @Override
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
         Profile profile = profileList.get(position);
-
         holder.nameText.setText(profile.getName());
         holder.roleText.setText(profile.getRole());
         holder.statusText.setText("Active");
-
         holder.detailsButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("profileId", profileIds.get(position));
@@ -46,7 +44,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
             bundle.putString("phone", profile.getPhone());
             bundle.putString("role", profile.getRole());
             bundle.putString("deviceId", profile.getDeviceId());
-
+            bundle.putBoolean("isEntrant", profile.isEntrant());
             Navigation.findNavController(v).navigate(R.id.adminProfileDetails, bundle);
         });
     }

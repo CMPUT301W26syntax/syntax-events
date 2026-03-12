@@ -28,10 +28,8 @@ public class AdminBrowseImages extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_browse_images, container, false);
-
         RecyclerView recyclerView = view.findViewById(R.id.recycler_images);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
         imageList = new ArrayList<>();
         imageIds = new ArrayList<>();
         adapter = new ImageAdapter(imageList, imageIds);
@@ -40,26 +38,17 @@ public class AdminBrowseImages extends Fragment {
                 .collection("events")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-
                     imageList.clear();
                     imageIds.clear();
-
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
-
                         String posterUrl = doc.getString("poster");
-
                         if (posterUrl != null && !posterUrl.isEmpty()) {
-
                             String uploadedBy = doc.getString("name");
-
                             imageList.add(new ImageItem(posterUrl, uploadedBy));
-                            imageIds.add(doc.getId());   // 这里存的是 eventId
-
-                        }
+                            imageIds.add(doc.getId());   //  eventId
+                      }
                     }
-
                     adapter.notifyDataSetChanged();
-
                 });
         return view;
     }

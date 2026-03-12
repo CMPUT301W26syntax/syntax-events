@@ -23,40 +23,31 @@ public class AdminProfileDetails extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_profile_details, container, false);
-
         Button removeProfileButton = view.findViewById(R.id.btn_remove_profile);
         Button removeOrganizerButton = view.findViewById(R.id.btn_remove_organizer);
-
         TextView nameText = view.findViewById(R.id.tv_detail_name);
         TextView emailText = view.findViewById(R.id.tv_detail_email);
         TextView roleText = view.findViewById(R.id.tv_detail_role);
         TextView deviceIdText = view.findViewById(R.id.tv_detail_device_id);
         TextView phoneText = view.findViewById(R.id.tv_detail_phone);
         TextView statusText = view.findViewById(R.id.tv_detail_status);
-
         Bundle args = getArguments();
         if (args == null) {
-            return view;
-        }
-
+            return view;}
         String profileId = args.getString("profileId");
         String name = args.getString("name");
         String email = args.getString("email");
         String role = args.getString("role");
         String deviceId = args.getString("deviceId");
         String phone = args.getString("phone");
-
         nameText.setText("Name: " + name);
         emailText.setText("Email: " + email);
         roleText.setText("Role: " + role);
         deviceIdText.setText("Device ID: " + deviceId);
         phoneText.setText("Phone: " + phone);
         statusText.setText("Status: Active");
-
         if (!"Organizer".equals(role)) {
-            removeOrganizerButton.setVisibility(View.GONE);
-        }
-
+            removeOrganizerButton.setVisibility(View.GONE);}
         removeProfileButton.setOnClickListener(v -> {
             FirebaseFirestore.getInstance()
                     .collection("profiles")
@@ -66,17 +57,29 @@ public class AdminProfileDetails extends Fragment {
                             NavHostFragment.findNavController(this).navigateUp()
                     );
         });
-
+        boolean isEntrant = args.getBoolean("isEntrant", false);
         removeOrganizerButton.setOnClickListener(v -> {
+            String newRole;
+            if (isEntrant) {
+                newRole = "Entrant";
+            } else {
+                newRole = "None";
+            }
+
             FirebaseFirestore.getInstance()
                     .collection("profiles")
                     .document(profileId)
-                    .update("role", "None")
+                    .update(
+                            "role", newRole,
+                            "organizer", false,
+                            "isOrganizer", false
+                    )
                     .addOnSuccessListener(unused -> {
-                        roleText.setText("Role: None");
+                        roleText.setText("Role: " + newRole);
                         removeOrganizerButton.setVisibility(View.GONE);
                     });
         });
+
 
         return view;
     }
