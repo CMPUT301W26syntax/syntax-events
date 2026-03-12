@@ -125,6 +125,12 @@ public class EventDetailFragment extends HomeBar {
                                 if (success) {
                                     joinButton.setText("Join");
                                     Toast.makeText(getContext(), "You left the event", Toast.LENGTH_SHORT).show();
+                                    new EventDetailRepository().getEventDetail(eventId, event -> {
+                                        if (!isAdded()) return;
+                                        requireActivity().runOnUiThread(() -> {
+                                            wLCount.setText("Waitlist: " + event.getWaitlistCount());
+                                        });
+                                    });
                                 } else {
                                     Toast.makeText(getContext(), "Failed to leave", Toast.LENGTH_SHORT).show();
                                 }
@@ -136,6 +142,12 @@ public class EventDetailFragment extends HomeBar {
                                 if (success) {
                                     joinButton.setText("Leave");
                                     Toast.makeText(getContext(), "Successfully joined!", Toast.LENGTH_SHORT).show();
+                                    new EventDetailRepository().getEventDetail(eventId, event -> {
+                                        if (!isAdded()) return;
+                                        requireActivity().runOnUiThread(() -> {
+                                            wLCount.setText("Waitlist: " + event.getWaitlistCount());
+                                        });
+                                    });
                                 } else {
                                     Toast.makeText(getContext(), "Join failed", Toast.LENGTH_SHORT).show();
                                 }
@@ -145,4 +157,5 @@ public class EventDetailFragment extends HomeBar {
             });
         });
     }
+
 }
