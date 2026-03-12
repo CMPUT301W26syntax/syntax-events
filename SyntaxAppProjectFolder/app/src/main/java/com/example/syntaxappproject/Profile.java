@@ -22,9 +22,6 @@ public class Profile {
     private boolean isEntrant;
     private boolean isOrganizer;
 
-    /**
-     * Required no-argument constructor for Firestore deserialization.
-     */
     public Profile() {}
 
     /**
