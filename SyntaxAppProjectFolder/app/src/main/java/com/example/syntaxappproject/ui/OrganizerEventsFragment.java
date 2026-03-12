@@ -34,6 +34,7 @@ public class OrganizerEventsFragment extends HomeBar {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupHotbar(view);
 
         View titleText = view.findViewById(R.id.textView);
         View tabRow    = view.findViewById(R.id.tabRow);

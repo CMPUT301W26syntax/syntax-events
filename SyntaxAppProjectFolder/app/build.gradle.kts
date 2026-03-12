@@ -55,7 +55,10 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation ("com.github.bumptech.glide:glide:5.0.5")
     annotationProcessor ("com.github.bumptech.glide:compiler:5.0.5")
-    implementation(files("${android.sdkDirectory}/platforms/android-${android.compileSdk}/android.jar"))
+    
+    // Use compileOnly to provide Javadocs/symbols without breaking R8 desugaring
+    compileOnly(files("${android.sdkDirectory}/platforms/android-${android.compileSdk}/android.jar"))
+
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
 }
