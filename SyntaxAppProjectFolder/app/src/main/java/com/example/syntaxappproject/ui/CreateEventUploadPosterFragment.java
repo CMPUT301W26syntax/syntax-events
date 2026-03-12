@@ -98,6 +98,11 @@ public class CreateEventUploadPosterFragment extends Fragment {
         eventData.put("description",  viewModel.getDescription().getValue());
         eventData.put("location",     viewModel.getLocation().getValue());
         eventData.put("capacity",     viewModel.getCapacity().getValue());
+        eventData.put("startingEventDate",     viewModel.getStartingEventDate().getValue());
+        eventData.put("endingEventDate",     viewModel.getEndingEventDate().getValue());
+        eventData.put("startingRegistrationPeriod",     viewModel.getStartingRegistrationPeriod().getValue());
+        eventData.put("endingRegistrationPeriod",     viewModel.getEndingRegistrationPeriod().getValue());
+        eventData.put("poster",     viewModel.getImageUri().getValue());
         eventData.put("organizerUid", organizerUid);
 
         db.collection("events")
