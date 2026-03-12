@@ -34,18 +34,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
         Profile profile = profileList.get(position);
 
-        holder.nameText.setText(profile.name);
-        holder.roleText.setText(profile.role);
+        holder.nameText.setText(profile.getName());
+        holder.roleText.setText(profile.getRole());
         holder.statusText.setText("Active");
 
         holder.detailsButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("profileId", profileIds.get(position));
-            bundle.putString("name", profile.name);
-            bundle.putString("email", profile.email);
-            bundle.putString("phone", profile.phone);
-            bundle.putString("role", profile.role);
-            bundle.putString("deviceId", profile.deviceId);
+            bundle.putString("name", profile.getName());
+            bundle.putString("email", profile.getEmail());
+            bundle.putString("phone", profile.getPhone());
+            bundle.putString("role", profile.getRole());
+            bundle.putString("deviceId", profile.getDeviceId());
 
             Navigation.findNavController(v).navigate(R.id.adminProfileDetails, bundle);
         });

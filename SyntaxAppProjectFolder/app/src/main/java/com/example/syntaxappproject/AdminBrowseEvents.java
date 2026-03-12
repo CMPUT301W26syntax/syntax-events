@@ -20,7 +20,7 @@ public class AdminBrowseEvents extends Fragment {
 
     private ArrayList<Event> eventList;
     private ArrayList<String> eventIds;
-    private EventAdapter adapter;
+    private AdminEventAdapter adapter;
 
     public AdminBrowseEvents() {
     }
@@ -34,7 +34,7 @@ public class AdminBrowseEvents extends Fragment {
 
         eventList = new ArrayList<>();
         eventIds = new ArrayList<>();
-        adapter = new EventAdapter(eventList, eventIds);
+        adapter = new AdminEventAdapter(eventList, eventIds);
         recyclerView.setAdapter(adapter);
 
         FirebaseFirestore.getInstance()

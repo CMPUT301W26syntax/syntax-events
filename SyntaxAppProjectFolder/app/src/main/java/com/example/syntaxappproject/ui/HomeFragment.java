@@ -1,78 +1,197 @@
 package com.example.syntaxappproject.ui;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.syntaxappproject.AuthenticationService;
+import com.example.syntaxappproject.EntrantHomeRepository;
+import com.example.syntaxappproject.EventAdapter;
+import com.example.syntaxappproject.EventDetail;
+import com.example.syntaxappproject.EventJoinRepository;
+import com.example.syntaxappproject.ProfileRepository;
 import com.example.syntaxappproject.R;
+import com.google.android.material.textfield.TextInputEditText;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class HomeFragment extends HomeBar {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private EventAdapter adapter;
+    private RecyclerView recyclerView;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private final AuthenticationService authService = new AuthenticationService();
+    private final EntrantHomeRepository entrantHomeRepo = new EntrantHomeRepository();
+    private final EventJoinRepository joinRepo = new EventJoinRepository();
+    private final ProfileRepository profileRepo = new ProfileRepository();
+    private List<EventDetail> allEvents = new ArrayList<>();
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    public HomeFragment() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
-
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupHotbar(view); //set ups home bar
+        setupHotbar(view);
+
+        TextInputEditText searchBar = view.findViewById(R.id.searchInput);
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterEvents(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+
+
+        recyclerView = view.findViewById(R.id.eventList);
+        Button eventsButton = view.findViewById(R.id.eventsButton);
+        Button createEventButton = view.findViewById(R.id.createEventButton);
+        View titleText = view.findViewById(R.id.textView);
+        View roleButtonRow = view.findViewById(R.id.roleButtonRow);
+        View mainCard = view.findViewById(R.id.mainCard);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new EventAdapter(new ArrayList<>(), this::openEventDetail);
+        recyclerView.setAdapter(adapter);
+
+        // --- Entrance Animations ---
+        titleText.setTranslationY(-20f);
+        titleText.animate().alpha(1f).translationY(0f)
+                .setDuration(400).setStartDelay(100).start();
+
+        roleButtonRow.setTranslationY(-10f);
+        roleButtonRow.animate().alpha(1f).translationY(0f)
+                .setDuration(400).setStartDelay(200).start();
+
+        mainCard.setTranslationY(30f);
+        mainCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(300).start();
+
+        // --- Role Logic ---
+        String uid = authService.getCurrentUserId();
+        profileRepo.getProfile(uid, profile -> {
+            if (profile == null || !isAdded()) return;
+
+            boolean isEntrant = profile.isEntrant();
+            boolean isOrganizer = profile.isOrganizer();
+
+            requireActivity().runOnUiThread(() -> {
+                eventsButton.setVisibility(isEntrant ? View.VISIBLE : View.GONE);
+                createEventButton.setVisibility(isOrganizer ? View.VISIBLE : View.GONE);
+
+                eventsButton.setBackgroundTintList(
+                        ColorStateList.valueOf(Color.parseColor("#2ECC71")));
+                eventsButton.setTextColor(Color.WHITE);
+
+                createEventButton.setBackgroundTintList(
+                        ColorStateList.valueOf(Color.parseColor("#D3D3D3")));
+                createEventButton.setTextColor(Color.BLACK);
+
+                if (isEntrant) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    setEventsList();
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    NavHostFragment.findNavController(this)
+                            .navigate(R.id.organizerEventsFragment);
+                }
+
+                eventsButton.setOnClickListener(v -> {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    setEventsList();
+                });
+
+                createEventButton.setOnClickListener(v ->
+                        NavHostFragment.findNavController(this)
+                                .navigate(R.id.organizerEventsFragment)
+                );
+            });
+        });
+    }
+
+    private void filterEvents(String query) {
+        if (query.isEmpty()) {
+            adapter.updateList(allEvents);
+            return;
+        }
+
+        String lower = query.toLowerCase();
+        List<EventDetail> results = new ArrayList<>();
+
+        for (EventDetail event : allEvents) {
+            if (event.getName() != null && event.getName().toLowerCase().contains(lower)) {
+                results.add(event);
+            }
+        }
+
+        adapter.updateList(results);
+    }
+
+
+    private void setEventsList() {
+        String uid = authService.getCurrentUserId();
+
+        entrantHomeRepo.getEvents(events -> {
+            if (events == null || events.isEmpty()) {
+                requireActivity().runOnUiThread(() -> {
+                    allEvents.clear();
+                    adapter.updateList(new ArrayList<>());
+                });
+                return;
+            }
+
+            List<EventDetail> filtered = new ArrayList<>();
+            AtomicInteger counter = new AtomicInteger(0);
+
+            for (EventDetail event : events) {
+                joinRepo.hasJoined(event.getEventId(), uid, joined -> {
+                    if (!joined) {
+                        synchronized (filtered) {
+                            filtered.add(event);
+                        }
+                    }
+                    if (counter.incrementAndGet() == events.size()) {
+                        requireActivity().runOnUiThread(() -> {
+                            allEvents = new ArrayList<>(filtered);;
+                            adapter.updateList(filtered);
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private void openEventDetail(EventDetail event) {
+        Bundle bundle = new Bundle();
+        bundle.putString("eventId", event.getEventId());
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.toEventDetailFragment, bundle);
     }
 }

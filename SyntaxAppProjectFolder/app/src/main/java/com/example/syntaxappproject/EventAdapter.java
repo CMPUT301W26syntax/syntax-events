@@ -1,72 +1,74 @@
 package com.example.syntaxappproject;
 
-import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.bumptech.glide.Glide;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+import java.util.List;
 
-    private ArrayList<Event> eventList;
-    private ArrayList<String> eventIds;
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
+    private List<EventDetail> events;
+    private OnItemClickListener listener;
 
-    public EventAdapter(ArrayList<Event> eventList, ArrayList<String> eventIds) {
-        this.eventList = eventList;
-        this.eventIds = eventIds;
+    public interface OnItemClickListener {
+        void onItemClick(EventDetail event);
     }
 
+    public EventAdapter(List<EventDetail> events, OnItemClickListener listener) {
+        this.events = events;
+        this.listener = listener;
+    }
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView eventImage;
+        TextView eventName;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            eventImage = itemView.findViewById(R.id.eventImage);
+            eventName = itemView.findViewById(R.id.eventName);
+        }
+    }
     @NonNull
     @Override
-    public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_item, parent, false);
-        return new EventViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_event, parent, false);
+
+        return new ViewHolder(view);
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        Event event = eventList.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.titleText.setText(event.title);
-        holder.organizerText.setText(event.organizer);
-        holder.locationText.setText(event.location);
+        EventDetail event = events.get(position);
 
-        holder.detailsButton.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("eventId", eventIds.get(position));
-            bundle.putString("title", event.title);
-            bundle.putString("description", event.description);
-            bundle.putString("organizer", event.organizer);
-            bundle.putString("location", event.location);
+        holder.eventName.setText(event.getName());
 
-            Navigation.findNavController(v).navigate(R.id.adminEventDetails, bundle);
-        });
+        Glide.with(holder.itemView.getContext())
+                .load(event.getPoster())
+                .into(holder.eventImage);
+
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(event));
+    }
+    public void updateList(List<EventDetail> newList) {
+        events = newList;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return eventList.size();
-    }
-
-    static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView titleText;
-        TextView organizerText;
-        TextView locationText;
-        Button detailsButton;
-
-        public EventViewHolder(@NonNull View itemView) {
-            super(itemView);
-            titleText = itemView.findViewById(R.id.tv_event_title);
-            organizerText = itemView.findViewById(R.id.tv_event_organizer);
-            locationText = itemView.findViewById(R.id.tv_event_location);
-            detailsButton = itemView.findViewById(R.id.btn_event_details);
-        }
+        return events.size();
     }
 }
