@@ -28,6 +28,8 @@ public class ProfileTest {
                 "Jane Doe",
                 "jane.doe@ualberta.ca",
                 "780-555-0192",
+                "Entrant",
+
                 true,
                 false,
                 true,
@@ -38,6 +40,8 @@ public class ProfileTest {
                 "Marcus Lee",
                 "marcus.lee@ualberta.ca",
                 null,
+                "Entrant",
+
                 false,
                 true,
                 true,
@@ -48,6 +52,8 @@ public class ProfileTest {
                 "Alex Ray",
                 "alex.ray@ualberta.ca",
                 "587-555-0344",
+                "Entrant",
+
                 true,
                 true,
                 false,
