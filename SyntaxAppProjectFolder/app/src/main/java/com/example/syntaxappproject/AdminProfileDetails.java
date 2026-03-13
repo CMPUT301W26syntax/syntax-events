@@ -14,12 +14,23 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-
+/**
+ * fragment that shows detailed information about a user profile
+ * admin can view the user's information and manage the account
+ * profile data is passed from the previous screen
+ */
 public class AdminProfileDetails extends Fragment {
-
+    /**
+     * empty public constructor for this fragment
+     */
     public AdminProfileDetails() {
     }
 
+    /**
+     * fragment that shows detailed information about a user profile
+     * admin can view the user's information and manage the account
+     * profile data is passed from the previous screen
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_profile_details, container, false);
@@ -46,6 +57,7 @@ public class AdminProfileDetails extends Fragment {
         deviceIdText.setText("Device ID: " + deviceId);
         phoneText.setText("Phone: " + phone);
         statusText.setText("Status: Active");
+        //removing or updating the user profile
         if (!"Organizer".equals(role)) {
             removeOrganizerButton.setVisibility(View.GONE);}
         removeProfileButton.setOnClickListener(v -> {
@@ -54,9 +66,8 @@ public class AdminProfileDetails extends Fragment {
                     .document(profileId)
                     .delete()
                     .addOnSuccessListener(unused ->
-                            NavHostFragment.findNavController(this).navigateUp()
-                    );
-        });
+                            NavHostFragment.findNavController(this).navigateUp());
+            });
         boolean isEntrant = args.getBoolean("isEntrant", false);
         removeOrganizerButton.setOnClickListener(v -> {
             String newRole;
@@ -65,7 +76,6 @@ public class AdminProfileDetails extends Fragment {
             } else {
                 newRole = "None";
             }
-
             FirebaseFirestore.getInstance()
                     .collection("profiles")
                     .document(profileId)
