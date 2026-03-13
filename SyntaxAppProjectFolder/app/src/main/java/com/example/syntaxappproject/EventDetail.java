@@ -1,6 +1,7 @@
 package com.example.syntaxappproject;
 
 import android.location.Criteria;
+import android.media.Image;
 
 /**
  * Model class representing the detail of an event in the SyntaxEvents application.
@@ -38,7 +39,6 @@ public class EventDetail {
 
     // ─── Media ────────────────────────────────────────────────────────────────
     private String poster;
-    private Ima
 
     /**
      * Required no-argument constructor for Firestore deserialization.
