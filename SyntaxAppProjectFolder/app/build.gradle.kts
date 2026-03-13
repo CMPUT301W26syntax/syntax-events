@@ -47,7 +47,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
