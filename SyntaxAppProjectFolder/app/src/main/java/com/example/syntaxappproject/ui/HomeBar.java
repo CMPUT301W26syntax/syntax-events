@@ -22,6 +22,7 @@ public abstract class HomeBar extends Fragment {
     protected void setupHotbar(View view) {
         NavController navController = NavHostFragment.findNavController(this);
 
+
         View hotbar = view.findViewById(R.id.homebarFragment);
 
         hotbar.findViewById(R.id.homeButton).setOnClickListener(v ->
