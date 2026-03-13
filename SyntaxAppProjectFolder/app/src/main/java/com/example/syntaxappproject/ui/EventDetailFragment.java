@@ -25,6 +25,8 @@ public class EventDetailFragment extends HomeBar {
     private String eventId;
     private final AuthenticationService authService = new AuthenticationService();
     private final EventJoinRepository joinRepo = new EventJoinRepository();
+    public boolean testingMode = false;
+    private String uid;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -36,12 +38,15 @@ public class EventDetailFragment extends HomeBar {
     @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setupHotbar(view);
-
         if (getArguments() != null) {
             eventId = getArguments().getString("eventId");
+            testingMode = getArguments().getBoolean("testingMode", false);
         }
+        if (!testingMode) {
+            super.onViewCreated(view, savedInstanceState);  // Skip HomeBar in tests
+        }
+
+        if (!testingMode) setupHotbar(view);
 
         ImageView eventPoster       = view.findViewById(R.id.eventPoster);
         TextView eventName          = view.findViewById(R.id.eventName);
@@ -60,35 +65,28 @@ public class EventDetailFragment extends HomeBar {
         View nameCard     = view.findViewById(R.id.nameCard);
         View detailsCard  = view.findViewById(R.id.detailsCard);
 
-        // --- Entrance Animations ---
         headerTitle.setTranslationY(-20f);
-        headerTitle.animate().alpha(1f).translationY(0f)
-                .setDuration(400).setStartDelay(100).start();
-
+        headerTitle.animate().alpha(1f).translationY(0f).setDuration(400).setStartDelay(100).start();
         backButton.setTranslationX(-20f);
-        backButton.animate().alpha(1f).translationX(0f)
-                .setDuration(400).setStartDelay(100).start();
-
+        backButton.animate().alpha(1f).translationX(0f).setDuration(400).setStartDelay(100).start();
         posterCard.setTranslationY(30f);
-        posterCard.animate().alpha(1f).translationY(0f)
-                .setDuration(500).setStartDelay(200).start();
-
+        posterCard.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(200).start();
         nameCard.setTranslationY(30f);
-        nameCard.animate().alpha(1f).translationY(0f)
-                .setDuration(500).setStartDelay(300).start();
-
+        nameCard.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(300).start();
         detailsCard.setTranslationY(30f);
-        detailsCard.animate().alpha(1f).translationY(0f)
-                .setDuration(500).setStartDelay(390).start();
+        detailsCard.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(390).start();
 
-        // --- Back button ---
-        view.findViewById(R.id.eventDetailBackButton).setOnClickListener(v ->
-                NavHostFragment.findNavController(this).popBackStack()
-        );
+        if (!testingMode) {
+            view.findViewById(R.id.eventDetailBackButton).setOnClickListener(v ->
+                    NavHostFragment.findNavController(this).popBackStack()
+            );
+        }
 
-        // --- Join button state ---
-        String uid = authService.getCurrentUserId();
-        if (uid != null) {
+        uid = authService.getCurrentUserId();
+        if (testingMode && uid == null) {
+            uid = "test_user"; // fake uid for testing
+        }
+        if (!testingMode && uid != null) {
             joinRepo.hasJoined(eventId, uid, joined ->
                     requireActivity().runOnUiThread(() ->
                             joinButton.setText(joined ? "Leave" : "Join")
@@ -96,66 +94,85 @@ public class EventDetailFragment extends HomeBar {
             );
         }
 
-        // --- Load event details ---
-        new EventDetailRepository().getEventDetail(eventId, event -> {
-            if (!isAdded()) return;
-            requireActivity().runOnUiThread(() -> {
-                Glide.with(this).load(event.getPoster()).into(eventPoster);
-                eventName.setText(event.getName());
-                description.setText(event.getDescription());
-                date.setText(event.getStartingEventDate());
-                location.setText(event.getLocation());
-                regiPeriod.setText(event.getStartingRegistrationPeriod());
-                capacity.setText("Capacity: " + event.getCapacity());
-                wLCount.setText("Waitlist: " + event.getWaitlistCount());
-                lotteryCriteria.setText(event.getLotteryCriteria());
+        if (!testingMode) {
+            new EventDetailRepository().getEventDetail(eventId, event -> {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    Glide.with(this).load(event.getPoster()).into(eventPoster);
+                    eventName.setText(event.getName());
+                    description.setText(event.getDescription());
+                    date.setText(event.getStartingEventDate());
+                    location.setText(event.getLocation());
+                    regiPeriod.setText(event.getStartingRegistrationPeriod());
+                    capacity.setText("Capacity: " + event.getCapacity());
+                    wLCount.setText("Waitlist: " + event.getWaitlistCount());
+                    lotteryCriteria.setText(event.getLotteryCriteria());
+                });
             });
-        });
+        }
 
-        // --- Join/Leave button logic ---
         joinButton.setOnClickListener(v -> {
             if (uid == null) {
                 Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
                 return;
             }
-            joinRepo.hasJoined(eventId, uid, joined -> {
-                if (joined) {
-                    joinRepo.leaveEvent(eventId, uid, success ->
-                            requireActivity().runOnUiThread(() -> {
-                                if (success) {
-                                    joinButton.setText("Join");
-                                    Toast.makeText(getContext(), "You left the event", Toast.LENGTH_SHORT).show();
-                                    new EventDetailRepository().getEventDetail(eventId, event -> {
-                                        if (!isAdded()) return;
-                                        requireActivity().runOnUiThread(() -> {
-                                            wLCount.setText("Waitlist: " + event.getWaitlistCount());
-                                        });
-                                    });
-                                } else {
-                                    Toast.makeText(getContext(), "Failed to leave", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                    );
+
+            if (testingMode) {
+                String currentText = wLCount.getText().toString();
+                int currentCount = Integer.parseInt(currentText.replaceAll("[^0-9]", ""));
+                if ("Join".equals(joinButton.getText().toString())) {
+                    joinButton.setText("Leave");
+                    wLCount.setText("Waitlist: " + (currentCount + 1));
                 } else {
-                    joinRepo.joinEvent(eventId, uid, success ->
-                            requireActivity().runOnUiThread(() -> {
+                    joinButton.setText("Join");
+                    wLCount.setText("Waitlist: " + (currentCount - 1));
+                }
+                return;
+            }
+
+            new EventDetailRepository().getEventDetail(eventId, event -> {
+                if (!isAdded()) return;
+
+                long eventCapacity = event.getCapacity();
+                long waitlistCount = event.getWaitlistCount();
+
+                joinRepo.hasJoined(eventId, uid, joined -> requireActivity().runOnUiThread(() -> {
+                    if (joined) {
+                        joinRepo.leaveEvent(eventId, uid, success -> requireActivity().runOnUiThread(() -> {
+                            if (success) {
+                                joinButton.setText("Join");
+                                joinButton.setAlpha(1f);
+                                joinButton.setEnabled(true);
+                                String currentText = wLCount.getText().toString();
+                                int currentCount = Integer.parseInt(currentText.replaceAll("[^0-9]", ""));
+                                wLCount.setText("Waitlist: " + (currentCount - 1));
+                                Toast.makeText(getContext(), "You left the event", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Failed to leave", Toast.LENGTH_SHORT).show();
+                            }
+                        }));
+                    } else {
+                        if (eventCapacity > 0 && waitlistCount >= eventCapacity) {
+                            joinButton.setAlpha(0.5f);
+                            joinButton.setText("Waitlist Full");
+                            joinButton.setEnabled(false);
+                            Toast.makeText(getContext(), "Event is at capacity", Toast.LENGTH_SHORT).show();
+                        } else {
+                            joinRepo.joinEvent(eventId, uid, success -> requireActivity().runOnUiThread(() -> {
                                 if (success) {
                                     joinButton.setText("Leave");
+                                    String currentText = wLCount.getText().toString();
+                                    int currentCount = Integer.parseInt(currentText.replaceAll("[^0-9]", ""));
+                                    wLCount.setText("Waitlist: " + (currentCount + 1));
                                     Toast.makeText(getContext(), "Successfully joined!", Toast.LENGTH_SHORT).show();
-                                    new EventDetailRepository().getEventDetail(eventId, event -> {
-                                        if (!isAdded()) return;
-                                        requireActivity().runOnUiThread(() -> {
-                                            wLCount.setText("Waitlist: " + event.getWaitlistCount());
-                                        });
-                                    });
                                 } else {
                                     Toast.makeText(getContext(), "Join failed", Toast.LENGTH_SHORT).show();
                                 }
-                            })
-                    );
-                }
+                            }));
+                        }
+                    }
+                }));
             });
         });
     }
-
 }

@@ -12,6 +12,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+
 /**
  * adapter used to display event items in the admin event list
  * it connects event data with the recyclerview item layout
@@ -22,14 +23,13 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ev
     private ArrayList<EventDetail> eventList;
     private ArrayList<String> eventIds;
 
-    public AdminEventAdapter(ArrayList<EventDetail> eventList, ArrayList<String> eventIds) {
     /**
      * creates the adapter with the event data and their firestore ids
      *
      * @param eventList list of events to display
      * @param eventIds firestore document ids for each event
      */
-    public AdminEventAdapter(ArrayList<Event> eventList, ArrayList<String> eventIds) {
+    public AdminEventAdapter(ArrayList<EventDetail> eventList, ArrayList<String> eventIds) {
         this.eventList = eventList;
         this.eventIds = eventIds;
     }
@@ -49,21 +49,17 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ev
     }
 
     @Override
+    /**
+     * binds the event data to the view holder so it shows correctly
+     *
+     * @param holder the view holder for the row
+     * @param position position of the event in the list
+     */
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         EventDetail event = eventList.get(position);
         holder.titleText.setText(event.getName());
         holder.organizerText.setText(event.getOrganizerUid());
         holder.locationText.setText(event.getLocation());
-/**
- * binds the event data to the view holder so it shows correctly
- *
- * @param holder the view holder for the row
- * @param position position of the event in the list
- */    public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        Event event = eventList.get(position);
-        holder.titleText.setText(event.title);
-        holder.organizerText.setText(event.organizer);
-        holder.locationText.setText(event.location);
         holder.detailsButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("eventId", event.getEventId());
@@ -80,8 +76,10 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ev
             bundle.putLong("waitlistCount", event.getWaitlistCount());
             bundle.putString("lotteryCriteria", event.getLotteryCriteria());
             bundle.putString("poster", event.getPoster());
-            Navigation.findNavController(v).navigate(R.id.adminEventDetails, bundle);});
-        }
+            Navigation.findNavController(v).navigate(R.id.adminEventDetails, bundle);
+        });
+    }
+
     @Override
     /**
      * returns the number of events in the list
@@ -89,7 +87,8 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ev
      * @return number of events
      */
     public int getItemCount() {
-        return eventList.size();}
+        return eventList.size();
+    }
 
     // create the view holder for each event item in the recyclerview
     static class EventViewHolder extends RecyclerView.ViewHolder {
@@ -97,6 +96,7 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ev
         TextView organizerText;
         TextView locationText;
         Button detailsButton;
+
         /**
          * view holder class that stores the views for one event item
          */
@@ -105,6 +105,7 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ev
             titleText = itemView.findViewById(R.id.tv_event_title);
             organizerText = itemView.findViewById(R.id.tv_event_organizer);
             locationText = itemView.findViewById(R.id.tv_event_location);
-            detailsButton = itemView.findViewById(R.id.btn_event_details);}
+            detailsButton = itemView.findViewById(R.id.btn_event_details);
         }
+    }
 }
