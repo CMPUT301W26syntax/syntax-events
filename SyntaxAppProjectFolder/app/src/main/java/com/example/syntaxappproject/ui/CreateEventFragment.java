@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.syntaxappproject.EventViewModel;
 import com.example.syntaxappproject.R;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 /**
  * Fragment that presents the event creation form to an organizer.
@@ -29,11 +30,24 @@ import com.google.android.material.textfield.TextInputEditText;
  * <p>Outstanding issues: geo-requirement flag is not yet collected on
  * this screen; lottery criteria input is also absent.</p>
  */
+
+/**
+ * Fragment that presents the event creation form to an organizer.
+ * <p>
+ * Collects event name, description, location, capacity, event dates,
+ * registration period dates, and geolocation requirement flag. On successful
+ * validation, the input is stored in a shared {@link EventViewModel} and the
+ * user is navigated to the poster upload step.
+ * </p>
+ *
+ * <p>Extends {@link HomeBar} to inherit the bottom navigation hotbar.</p>
+ */
 public class CreateEventFragment extends HomeBar {
 
     private TextInputEditText eventNameInput, descriptionInput, locationInput, capacityInput;
     private TextInputEditText eventStartDateInput, eventEndDateInput;
     private TextInputEditText regisStartDateInput, regisEndDateInput;
+    private SwitchMaterial geoSwitch;
 
     /**
      * Inflates the create event layout.
@@ -60,16 +74,17 @@ public class CreateEventFragment extends HomeBar {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupHotbar(view);
+        try { setupHotbar(view); } catch (Exception ignored) {}
 
-        eventNameInput    = view.findViewById(R.id.eventNameInput);
-        descriptionInput  = view.findViewById(R.id.descriptionInput);
-        locationInput     = view.findViewById(R.id.locationInput);
-        capacityInput     = view.findViewById(R.id.capacityInput);
+        eventNameInput = view.findViewById(R.id.eventNameInput);
+        descriptionInput = view.findViewById(R.id.descriptionInput);
+        locationInput = view.findViewById(R.id.locationInput);
+        capacityInput = view.findViewById(R.id.capacityInput);
         eventStartDateInput = view.findViewById(R.id.eventStartDateInput);
-        eventEndDateInput   = view.findViewById(R.id.eventEndDateInput);
+        eventEndDateInput = view.findViewById(R.id.eventEndDateInput);
         regisStartDateInput = view.findViewById(R.id.regisStartDateInput);
-        regisEndDateInput   = view.findViewById(R.id.regisEndDateInput);
+        regisEndDateInput = view.findViewById(R.id.regisEndDateInput);
+        geoSwitch = view.findViewById(R.id.geolocationSwitch);
 
         // Date pickers
         eventStartDateInput.setOnClickListener(v -> showDatePicker(eventStartDateInput));
@@ -81,35 +96,35 @@ public class CreateEventFragment extends HomeBar {
         View headerTitle = view.findViewById(R.id.headerTitle);
         View detailsCard = view.findViewById(R.id.detailsCard);
         View capacityCard = view.findViewById(R.id.capacityCard);
-        View datesCard   = view.findViewById(R.id.datesCard);
-        View actionCard  = view.findViewById(R.id.actionCard);
+        View datesCard = view.findViewById(R.id.datesCard);
+        View actionCard = view.findViewById(R.id.actionCard);
+        View geolocationCard = view.findViewById(R.id.GeolocationCard);
 
         headerTitle.setTranslationY(-20f);
-        headerTitle.animate().alpha(1f).translationY(0f)
-                .setDuration(400).setStartDelay(100).start();
+        headerTitle.animate().alpha(1f).translationY(0f).setDuration(400).setStartDelay(100).start();
 
         detailsCard.setTranslationY(30f);
-        detailsCard.animate().alpha(1f).translationY(0f)
-                .setDuration(500).setStartDelay(200).start();
+        detailsCard.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(200).start();
 
         capacityCard.setTranslationY(30f);
-        capacityCard.animate().alpha(1f).translationY(0f)
-                .setDuration(500).setStartDelay(300).start();
+        capacityCard.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(300).start();
 
         datesCard.setTranslationY(30f);
-        datesCard.animate().alpha(1f).translationY(0f)
-                .setDuration(500).setStartDelay(380).start();
+        datesCard.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(380).start();
 
         actionCard.setTranslationY(30f);
-        actionCard.animate().alpha(1f).translationY(0f)
-                .setDuration(500).setStartDelay(450).start();
+        actionCard.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(450).start();
+
+        geolocationCard.setTranslationY(30f);
+        geolocationCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(350).start();
 
         NavController navController = NavHostFragment.findNavController(this);
 
         view.findViewById(R.id.continueButton).setOnClickListener(v -> {
-            String name        = getText(eventNameInput);
+            String name = getText(eventNameInput);
             String description = getText(descriptionInput);
-            String location    = getText(locationInput);
+            String location = getText(locationInput);
             String capacityStr = getText(capacityInput);
             String startingEventDate = getText(eventStartDateInput);
             String endingEventDate = getText(eventEndDateInput);
@@ -130,14 +145,17 @@ public class CreateEventFragment extends HomeBar {
                 toast("Capacity must be a valid number"); return;
             }
 
-            int capacity = Integer.parseInt(capacityStr);
-            if (capacity <= 0) {
-                toast("Capacity must be greater than 0"); return;
+            int capacity = 0;
+            if (!capacityStr.isEmpty()) {
+                if (!isInteger(capacityStr)) { toast("Capacity must be a valid number"); return; }
+                capacity = Integer.parseInt(capacityStr);
+                if (capacity < 1) { toast("Capacity must be 1 or greater"); return; }
             }
 
             // -- Save values into view model --
             EventViewModel viewModel = new ViewModelProvider(requireActivity()).get(EventViewModel.class);
             viewModel.setName(name);
+            viewModel.setGeoReq(geoSwitch.isChecked());
             viewModel.setDescription(description);
             viewModel.setLocation(location);
             viewModel.setCapacity(capacity);
@@ -149,7 +167,6 @@ public class CreateEventFragment extends HomeBar {
             navController.navigate(R.id.toUploadImageFragment);
         });
     }
-
 
     /**
      * Displays a {@link android.app.DatePickerDialog} and writes the selected

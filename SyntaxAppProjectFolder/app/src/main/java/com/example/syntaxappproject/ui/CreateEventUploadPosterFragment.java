@@ -41,6 +41,7 @@ public class CreateEventUploadPosterFragment extends Fragment {
     private EventViewModel viewModel;
 
     private final AuthenticationService authService = new AuthenticationService();
+
     /**
      * Inflates the upload poster layout.
      *
@@ -56,6 +57,7 @@ public class CreateEventUploadPosterFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_create_event_upload_poster, container, false);
     }
+
     /**
      * Called immediately after {@link #onCreateView}. Binds views, applies
      * entrance animations, and attaches click handlers for poster selection,
@@ -110,6 +112,15 @@ public class CreateEventUploadPosterFragment extends Fragment {
         view.findViewById(R.id.skipPosterButton).setOnClickListener(v -> saveEventToFirebase());
     }
 
+    /**
+     * Launches the device gallery via an {@link Intent} to allow the
+     * organizer to pick an image for the event poster.
+     */
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        galleryLauncher.launch(intent);
+    }
 
     /**
      * Writes all event data collected in {@link EventViewModel} to Firestore
@@ -119,12 +130,6 @@ public class CreateEventUploadPosterFragment extends Fragment {
      * On failure, displays a short toast to the user.
      * </p>
      */
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        galleryLauncher.launch(intent);
-    }
-
     private void saveEventToFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String organizerUid = authService.getCurrentUserId();
@@ -156,17 +161,6 @@ public class CreateEventUploadPosterFragment extends Fragment {
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show()
                 );
-    }
-
-
-    /**
-     * Launches the device gallery via an {@link Intent} to allow the
-     * organizer to pick an image for the event poster.
-     */
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        galleryLauncher.launch(intent);
     }
 
     /**
@@ -221,7 +215,6 @@ public class CreateEventUploadPosterFragment extends Fragment {
         NavHostFragment.findNavController(this)
                 .navigate(R.id.toCreateEventQRFragment, bundle);
     }
-
 
     private final ActivityResultLauncher<Intent> galleryLauncher =
             registerForActivityResult(

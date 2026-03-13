@@ -1,8 +1,14 @@
 package com.example.syntaxappproject;
 
+import android.util.Log;
+
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,17 +77,37 @@ public class EventJoinRepository {
      * @param callback the {@link JoinCallback} invoked with the result
      */
     public void joinEvent(String eventId, String userId, JoinCallback callback) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("joinedAt", Timestamp.now());
+        db.runTransaction(transaction -> {
+                    // Check if already joined
+                    DocumentReference docRef = db.collection("events")
+                            .document(eventId)
+                            .collection("waitlist-entrants")
+                            .document(userId);
 
-        db.collection("events")
-                .document(eventId)
-                .collection("waitlist-entrants")
-                .document(userId)
-                .set(data)
-                .addOnCompleteListener(task ->
-                        callback.onComplete(task.isSuccessful()));
+                    DocumentSnapshot snapshot = transaction.get(docRef);
+
+                    if (snapshot.exists()) {
+                        throw new RuntimeException("Already joined");
+                    }
+
+                    // Add user and increment count atomically
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("joinedAt", Timestamp.now());
+                    transaction.set(docRef, data);
+
+                    DocumentReference eventRef = db.collection("events").document(eventId);
+                    transaction.update(eventRef, "waitlistCount", FieldValue.increment(1));
+
+                    return null;
+                })
+                .addOnSuccessListener(aVoid -> callback.onComplete(true))
+                .addOnFailureListener(e -> {
+                    Log.e("EventJoinRepo", "Join transaction failed: " + e.getMessage());
+                    callback.onComplete(false);
+                });
     }
+
+
 
     /**
      * Removes a user from the waitlist of the specified event.
@@ -91,18 +117,33 @@ public class EventJoinRepository {
      * @param callback the {@link JoinCallback} invoked with the result
      */
     public void leaveEvent(String eventId, String userId, JoinCallback callback) {
-        db.collection("events")
-                .document(eventId)
-                .update("waitlistCount", FieldValue.increment(1));
+        db.runTransaction(new Transaction.Function<Void>() {
+                    @Override
+                    public Void apply(Transaction transaction) throws FirebaseFirestoreException {
+                        DocumentReference docRef = db.collection("events")
+                                .document(eventId)
+                                .collection("waitlist-entrants")
+                                .document(userId);
 
-        db.collection("events")
-                .document(eventId)
-                .collection("waitlist-entrants")
-                .document(userId)
-                .delete()
-                .addOnCompleteListener(task ->
-                        callback.onComplete(task.isSuccessful()));
+                        // Get document in transaction context
+                        DocumentSnapshot snapshot = transaction.get(docRef);
+
+                        if (!snapshot.exists()) {
+                            throw new RuntimeException("Not joined");
+                        }
+
+                        // Delete and decrement atomically
+                        transaction.delete(docRef);
+                        DocumentReference eventRef = db.collection("events").document(eventId);
+                        transaction.update(eventRef, "waitlistCount", FieldValue.increment(-1));
+
+                        return null;
+                    }
+                })
+                .addOnSuccessListener(aVoid -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
     }
+
 
     /**
      * Callback interface for waitlist membership check results.

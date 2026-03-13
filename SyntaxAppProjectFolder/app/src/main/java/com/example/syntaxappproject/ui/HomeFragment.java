@@ -172,21 +172,34 @@ public class HomeFragment extends HomeBar {
 
             for (EventDetail event : events) {
                 joinRepo.hasJoined(event.getEventId(), uid, joined -> {
-                    if (!joined) {
+                    if (joined) {
+                        counter.incrementAndGet();
+                        checkCounter(counter, events.size(), filtered);
+                        return;
+                    }
+
+                    long capacity = event.getCapacity();
+                    if (capacity == 0 || event.getWaitlistCount() < capacity) {
                         synchronized (filtered) {
                             filtered.add(event);
                         }
                     }
-                    if (counter.incrementAndGet() == events.size()) {
-                        requireActivity().runOnUiThread(() -> {
-                            allEvents = new ArrayList<>(filtered);;
-                            adapter.updateList(filtered);
-                        });
-                    }
+
+                    checkCounter(counter, events.size(), filtered);
                 });
             }
         });
     }
+
+    private void checkCounter(AtomicInteger counter, int total, List<EventDetail> filtered) {
+        if (counter.incrementAndGet() == total) {
+            requireActivity().runOnUiThread(() -> {
+                allEvents = new ArrayList<>(filtered);
+                adapter.updateList(filtered);
+            });
+        }
+    }
+
 
     private void openEventDetail(EventDetail event) {
         Bundle bundle = new Bundle();
