@@ -25,6 +25,7 @@ public class EventDetailRepository {
     public EventDetailRepository(){
         db = FirebaseFirestore.getInstance();
     }
+    protected EventDetailRepository(boolean testMode){}
     private EventDetail event;
     /**
      * Retrieves the data of the event associated with the given UID from Firestore.
