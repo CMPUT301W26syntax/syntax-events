@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.syntaxappproject.EventViewModel;
 import com.example.syntaxappproject.R;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 /**
  * Fragment that presents the event creation form to an organizer.
@@ -34,7 +35,7 @@ public class CreateEventFragment extends HomeBar {
     private TextInputEditText eventNameInput, descriptionInput, locationInput, capacityInput;
     private TextInputEditText eventStartDateInput, eventEndDateInput;
     private TextInputEditText regisStartDateInput, regisEndDateInput;
-
+    private SwitchMaterial geoSwitch;
     /**
      * Inflates the create event layout.
      *
@@ -70,6 +71,8 @@ public class CreateEventFragment extends HomeBar {
         eventEndDateInput   = view.findViewById(R.id.eventEndDateInput);
         regisStartDateInput = view.findViewById(R.id.regisStartDateInput);
         regisEndDateInput   = view.findViewById(R.id.regisEndDateInput);
+        geoSwitch = view.findViewById(R.id.geolocationSwitch);
+
 
         // Date pickers
         eventStartDateInput.setOnClickListener(v -> showDatePicker(eventStartDateInput));
@@ -106,7 +109,10 @@ public class CreateEventFragment extends HomeBar {
 
         NavController navController = NavHostFragment.findNavController(this);
 
+
+
         view.findViewById(R.id.continueButton).setOnClickListener(v -> {
+
             String name        = getText(eventNameInput);
             String description = getText(descriptionInput);
             String location    = getText(locationInput);
@@ -115,6 +121,7 @@ public class CreateEventFragment extends HomeBar {
             String endingEventDate = getText(eventEndDateInput);
             String startingRegistrationPeriod = getText(regisStartDateInput);
             String endingRegistrationPeriod = getText(regisEndDateInput);
+
 
             // --Error check inputs --
             if (name.isEmpty()) {
@@ -138,6 +145,7 @@ public class CreateEventFragment extends HomeBar {
             // -- Save values into view model --
             EventViewModel viewModel = new ViewModelProvider(requireActivity()).get(EventViewModel.class);
             viewModel.setName(name);
+            viewModel.setGeoReq(geoSwitch.isChecked());
             viewModel.setDescription(description);
             viewModel.setLocation(location);
             viewModel.setCapacity(capacity);
@@ -170,7 +178,6 @@ public class CreateEventFragment extends HomeBar {
         );
         picker.show();
     }
-
 
     /**
      * Safely extracts and trims the text from a {@link TextInputEditText}.
@@ -209,3 +216,4 @@ public class CreateEventFragment extends HomeBar {
         }
     }
 }
+
