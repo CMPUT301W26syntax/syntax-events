@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#F7F3FA">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Image Details"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_remove_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remove Image"
+        android:textAllCaps="false"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        android:textColor="#FF3B30"
+        android:background="@drawable/rounded_red_outline_button"
+        android:backgroundTint="@null"
+        android:layout_marginBottom="24dp" />
+
+    <ImageView
+        android:id="@+id/img_detail"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="image detail" />
+
+    <TextView
+        android:id="@+id/tv_uploaded_by"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Uploaded by: "
+        android:layout_marginBottom="10dp" />
+
+
+</LinearLayout>

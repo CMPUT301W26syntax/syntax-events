@@ -6,10 +6,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
 public class EventDetailRepository {
     private FirebaseFirestore db;
     private DocumentReference detailRef;
@@ -24,22 +20,8 @@ public class EventDetailRepository {
         detailRef.get().addOnSuccessListener(documentSnapshot -> {
 
             if (documentSnapshot.exists()) {
-                String eventName = documentSnapshot.getString("name");
-                String description = documentSnapshot.getString("description");
-                String startingEventDateDate = documentSnapshot.getString("startingEventDate");
-                String endingEventDateDate = documentSnapshot.getString("endingEventDate");
-                String location = documentSnapshot.getString("location");
-                String startingRegistrationPeriod = documentSnapshot.getString("startingRegistrationPeriod");
-                String endingRegistrationPeriod = documentSnapshot.getString("endingRegistrationPeriod");
-                Long capacity = documentSnapshot.getLong("capacity");
-                boolean geoReq = Boolean.TRUE.equals(documentSnapshot.getBoolean("geoReq"));
-                String waitlistCount = documentSnapshot.getString("waitlistCount");
-                String lotteryCriteria = documentSnapshot.getString("lotteryCriteria");
-                String poster = documentSnapshot.getString("poster");
-                Map<String, Profile> lotteryWinners = (Map<String, Profile>) documentSnapshot.get("lotteryWinners");
 
-                event = new EventDetail(eventId, eventName, description, location, capacity, geoReq, startingEventDateDate,
-                        endingEventDateDate, startingRegistrationPeriod,endingRegistrationPeriod, waitlistCount, lotteryCriteria, poster, lotteryWinners);
+                event = documentSnapshot.toObject(EventDetail.class);
                 callback.onEventLoaded(event);
             }
         });

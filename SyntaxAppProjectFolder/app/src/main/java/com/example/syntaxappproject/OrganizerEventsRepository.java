@@ -14,6 +14,8 @@ public class OrganizerEventsRepository {
         db = FirebaseFirestore.getInstance();
     }
 
+    protected OrganizerEventsRepository(boolean testMode) {}
+
     public void getOrganizerEvents(String organizerUid, EventsCallback callback) {
         db.collection("events")
                 .whereEqualTo("organizerUid", organizerUid)
