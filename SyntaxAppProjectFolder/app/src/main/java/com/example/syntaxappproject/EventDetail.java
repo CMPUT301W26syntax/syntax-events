@@ -38,6 +38,7 @@ public class EventDetail {
 
     // ─── Media ────────────────────────────────────────────────────────────────
     private String poster;
+    private Ima
 
     /**
      * Required no-argument constructor for Firestore deserialization.

@@ -23,10 +23,22 @@ import java.util.Map;
 public class QRCodeService {
     private static String openAppString = "syntaxappproject://open";
 
+    /**
+     * public interface for generating a Qr code
+     * @param deep_link     is the firebase ID of the event
+     * @return              a bitmap of the qr code
+     */
+
     public static Bitmap generateQRCode (String deep_link) {
         BitMatrix matrix = makeQRCodeMatrix(deep_link);
         return toBitmap(matrix);
     }
+
+    /**
+     * Tries to make a QR code using the deep link as is
+     * @param deep_link     is the firebase ID of the event
+     * @return              a bitmatrix of the qr code
+     */
 
     private static BitMatrix makeQRCodeMatrix(String deep_link) {
         // Code mostly from https://lknuth.dev/writings/generating_qrcodes_with_zxing/
@@ -42,6 +54,12 @@ public class QRCodeService {
         return matrix;
     }
 
+    /**
+     * takes a BitMatrix and attempts to convert it into a Bitmap which can be used for image displays
+     * @param matrix    the matrix to convert
+     * @return          a bitmap of the matrix
+     */
+
     // Code from https://lknuth.dev/writings/generating_qrcodes_with_zxing/
     private static Bitmap toBitmap(BitMatrix matrix){
         int height = matrix.getHeight();
@@ -55,6 +73,7 @@ public class QRCodeService {
         return bmp;
     }
 
+    /*
     private static String decodeQRCode(Bitmap bMap) {
         String contents = null;
 
@@ -85,7 +104,7 @@ public class QRCodeService {
 
     // Will be used later in development for storing QR codes
     // Code from https://lknuth.dev/writings/generating_qrcodes_with_zxing/
-    /*
+
     public static void storeBitMap(Bitmap qrcode_bmp) {
         File sdcard = Environment.getExternalStorageDirectory();
         FileOutputStream out = null;

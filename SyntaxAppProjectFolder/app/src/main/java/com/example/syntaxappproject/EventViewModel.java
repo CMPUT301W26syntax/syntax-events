@@ -12,6 +12,9 @@ import androidx.lifecycle.ViewModel;
  */
 public class EventViewModel extends ViewModel {
 
+    // Identity
+    private final MutableLiveData<String> eventId = new MutableLiveData<>();
+
     //Event Info
     private final MutableLiveData<String> name = new MutableLiveData<>();
     private final MutableLiveData<String> description = new MutableLiveData<>();
@@ -30,6 +33,13 @@ public class EventViewModel extends ViewModel {
     //Media
     private final MutableLiveData<Uri> imageUri = new MutableLiveData<>();
     private final MutableLiveData<String> qrCodeData = new MutableLiveData<>();
+
+
+    // Identity
+
+    // Event ID
+    public LiveData<String> getEventId() { return eventId; }
+    public void setEventId(String id) { eventId.setValue(id); }
 
 
     //Event Info
