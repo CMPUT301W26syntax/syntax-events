@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class AdminBrowseEvents extends Fragment {
 
-    private ArrayList<Event> eventList;
+    private ArrayList<EventDetail> eventList;
     private ArrayList<String> eventIds;
     private AdminEventAdapter adapter;
 
@@ -42,7 +42,7 @@ public class AdminBrowseEvents extends Fragment {
                     eventList.clear();
                     eventIds.clear();
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        Event event = doc.toObject(Event.class);
+                        EventDetail event = doc.toObject(EventDetail.class);
                         if (event != null) {
                             eventList.add(event);
                             eventIds.add(doc.getId());
