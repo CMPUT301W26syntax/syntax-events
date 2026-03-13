@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class EventJoinRepository {
 
+    // Firestore instance used for all database operations
     private FirebaseFirestore db = null;
 
     /**
@@ -45,6 +46,10 @@ public class EventJoinRepository {
      *                 if the user is on the waitlist, {@code false} otherwise
      */
     public void hasJoined(String eventId, String userId, JoinCheckCallback callback) {
+        if (eventId == null || userId == null) {
+            callback.onResult(false);  // Or handle error appropriately
+            return;
+        }
         db.collection("events")
                 .document(eventId)
                 .collection("waitlist-entrants")

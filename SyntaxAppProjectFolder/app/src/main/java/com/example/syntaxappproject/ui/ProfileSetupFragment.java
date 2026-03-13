@@ -18,14 +18,36 @@ import com.example.syntaxappproject.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+/**
+ * Fragment for initial user profile setup during onboarding.
+ *
+ * <p>Allows users to select roles (Entrant/Organizer), enter personal info,
+ * and create their Firestore profile. Handles both new profile creation and
+ * updates to existing profiles.</p>
+ */
 public class ProfileSetupFragment extends Fragment {
 
+    /** Tracks user's entrant role selection. */
     private boolean isEntrant   = true;
+
+    /** Tracks user's organizer role selection. */
     private boolean isOrganizer = false;
 
+    /** Entrant role selection button. */
     private MaterialButton entrantButton;
+
+    /** Organizer role selection button. */
     private MaterialButton organizerButton;
 
+    /** Lazy-initialized profile repository. */
+    ProfileRepository profileRepo;
+
+    /** Lazy-initialized auth service. */
+    AuthenticationService authService;
+
+    /**
+     * Inflates profile setup layout.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -33,10 +55,14 @@ public class ProfileSetupFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_profile_setup, container, false);
     }
 
+    /**
+     * Initializes views, animations, role toggles, and confirm button handler.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Cache UI element references
         entrantButton   = view.findViewById(R.id.entrantButton);
         organizerButton = view.findViewById(R.id.organizerButton);
 
@@ -52,7 +78,6 @@ public class ProfileSetupFragment extends Fragment {
         View contactCard   = view.findViewById(R.id.contactCard);
         View confirmCard   = view.findViewById(R.id.confirmCard);
 
-        // --- Entrance Animations ---
         headerTitle.setTranslationY(-20f);
         headerTitle.animate().alpha(1f).translationY(0f)
                 .setDuration(400).setStartDelay(100).start();
@@ -76,7 +101,6 @@ public class ProfileSetupFragment extends Fragment {
         confirmCard.animate().alpha(1f).translationY(0f)
                 .setDuration(500).setStartDelay(520).start();
 
-        // --- Role toggles ---
         updateRoleButtons();
 
         entrantButton.setOnClickListener(v -> {
@@ -89,94 +113,100 @@ public class ProfileSetupFragment extends Fragment {
             updateRoleButtons();
         });
 
-        // --- Confirm ---
-        view.findViewById(R.id.confirmButton).setOnClickListener(v -> {
-            if (!isEntrant && !isOrganizer) {
-                Toast.makeText(requireContext(), "Please select at least one role", Toast.LENGTH_SHORT).show();
+        view.findViewById(R.id.confirmButton).setOnClickListener(v -> confirmProfile(firstName, lastName, email, phone));
+    }
+
+    /**
+     * Validates form and triggers profile save workflow.
+     */
+    private void confirmProfile(TextInputEditText firstName, TextInputEditText lastName,
+                                TextInputEditText email, TextInputEditText phone) {
+
+        if (!isEntrant && !isOrganizer) { // Role validation (at least one required)
+            Toast.makeText(requireContext(), "Please select at least one role", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String firstNameVal = firstName.getText() != null ? firstName.getText().toString().trim() : "";
+        String lastNameVal  = lastName.getText()  != null ? lastName.getText().toString().trim()  : "";
+        String emailVal     = email.getText()     != null ? email.getText().toString().trim()     : "";
+        String phoneVal     = phone.getText()     != null ? phone.getText().toString().trim()     : "";
+
+        if (firstNameVal.isEmpty() || emailVal.isEmpty()) {
+            Toast.makeText(requireContext(), "Name and Email are required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (authService == null) authService = new AuthenticationService();
+        if (profileRepo == null) profileRepo = new ProfileRepository();
+
+        authService.signInAnonymously(success -> {
+            if (!success) {
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), "Authentication failed", Toast.LENGTH_SHORT).show());
                 return;
             }
 
-            String firstNameVal = firstName.getText() != null ? firstName.getText().toString().trim() : "";
-            String lastNameVal  = lastName.getText()  != null ? lastName.getText().toString().trim()  : "";
-            String emailVal     = email.getText()     != null ? email.getText().toString().trim()     : "";
-            String phoneVal     = phone.getText()     != null ? phone.getText().toString().trim()     : "";
+            String uid = authService.getCurrentUserId();
+            String fullName = firstNameVal + (lastNameVal.isEmpty() ? "" : " " + lastNameVal);
 
-            if (firstNameVal.isEmpty() || emailVal.isEmpty()) {
-                Toast.makeText(requireContext(), "Name and Email are required", Toast.LENGTH_SHORT).show();
-                return;
+            String role;
+            if (isOrganizer) {
+                role = "Organizer";
+            } else if (isEntrant) {
+                role = "Entrant";
+            } else {
+                role = "None";
             }
 
-            AuthenticationService authService = new AuthenticationService();
-            ProfileRepository profileRepo = new ProfileRepository();
+            Profile profile = new Profile(
+                    fullName,
+                    emailVal,
+                    phoneVal.isEmpty() ? null : phoneVal,
+                    role,
+                    isEntrant,
+                    isOrganizer,
+                    true,  // Default: notifications enabled
+                    uid
+            );
 
-            authService.signInAnonymously(success -> {
-                if (!success) {
-                    requireActivity().runOnUiThread(() ->
-                            Toast.makeText(requireContext(), "Authentication failed", Toast.LENGTH_SHORT).show());
-                    return;
-                }
-
-                String uid = authService.getCurrentUserId();
-                String fullName = firstNameVal + (lastNameVal.isEmpty() ? "" : " " + lastNameVal);
-
-
-                String role;
-                if (isOrganizer) {
-                    role = "Organizer";
-                } else if (isEntrant) {
-                    role = "Entrant";
+            profileRepo.getProfile(uid, existing -> {
+                if (existing != null) {
+                    profileRepo.updateProfile(uid, profile, saved -> handleSaveResult(saved, R.id.userFragment));
                 } else {
-                    role = "None";
+                    profileRepo.createProfile(uid, profile, saved -> {
+                        if (saved) {
+                            requireActivity()
+                                    .getSharedPreferences("UserPrefs", 0)
+                                    .edit()
+                                    .putBoolean("isLoggedIn", true)
+                                    .apply();
+                        }
+                        handleSaveResult(saved, R.id.action_profile_to_home);
+                    });
                 }
-
-                Profile profile = new Profile(
-                        fullName,
-                        emailVal,
-                        phoneVal.isEmpty() ? null : phoneVal,
-                        role,
-                        isEntrant,
-                        isOrganizer,
-                        true,
-                        uid
-                );
-
-                profileRepo.getProfile(uid, existing -> {
-                    if (existing != null) {
-                        profileRepo.updateProfile(uid, profile, saved -> {
-                            if (!isAdded()) return;
-                            requireActivity().runOnUiThread(() -> {
-                                if (saved) {
-                                    NavHostFragment.findNavController(this)
-                                            .navigate(R.id.userFragment);
-                                    Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(requireContext(), "Update failed", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        });
-                    } else {
-                        profileRepo.createProfile(uid, profile, saved -> {
-                            if (!isAdded()) return;
-                            requireActivity().runOnUiThread(() -> {
-                                if (saved) {
-                                    requireActivity()
-                                            .getSharedPreferences("UserPrefs", 0)
-                                            .edit()
-                                            .putBoolean("isLoggedIn", true)
-                                            .apply();
-                                    NavHostFragment.findNavController(this)
-                                            .navigate(R.id.action_profile_to_home);
-                                } else {
-                                    Toast.makeText(requireContext(), "Failed to save profile", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        });
-                    }
-                });
             });
         });
     }
 
+    /**
+     * Handles save completion: shows feedback and navigates.
+     */
+    private void handleSaveResult(boolean saved, int navAction) {
+        if (!isAdded()) return;
+        requireActivity().runOnUiThread(() -> {
+            if (saved) {
+                NavHostFragment.findNavController(this).navigate(navAction);
+                Toast.makeText(requireContext(), "Profile saved!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "Save failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Updates role button visual states based on current selections.
+     */
     private void updateRoleButtons() {
         entrantButton.setBackgroundTintList(
                 android.content.res.ColorStateList.valueOf(

@@ -5,13 +5,16 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AdminFragmentTest">
+      <SelectionState runConfigName="ProfileSetupFragmentTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AdminEventDetailsTest">
+      <SelectionState runConfigName="SplashFragmentTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AdminBrowseProfilesTest">
+      <SelectionState runConfigName="UserFragmentTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="Tests in 'com.example.syntaxappproject.ui'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
