@@ -16,12 +16,30 @@ import com.example.syntaxappproject.ProfileRepository;
 import com.example.syntaxappproject.R;
 import com.google.android.material.button.MaterialButton;
 
+/**
+ * Splash screen fragment displayed on app launch.
+ *
+ * <p>Shows animated branding and handles initial authentication + navigation
+ * routing based on user's profile role (profile setup → home → admin).</p>
+ */
 public class SplashFragment extends Fragment {
 
+    /** Lazy-initialized authentication service. */
+    AuthenticationService authService;
+
+    /** Lazy-initialized profile repository. */
+    ProfileRepository profileRepo;
+
+    /**
+     * Default constructor specifying splash layout.
+     */
     public SplashFragment() {
         super(R.layout.fragment_splash);
     }
 
+    /**
+     * Inflates splash layout.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -29,10 +47,28 @@ public class SplashFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_splash, container, false);
     }
 
+    /**
+     * Setter for dependency injection (testing).
+     */
+    public void setAuthService(AuthenticationService authService) {
+        this.authService = authService;
+    }
+
+    /**
+     * Setter for dependency injection (testing).
+     */
+    public void setProfileRepo(ProfileRepository profileRepo) {
+        this.profileRepo = profileRepo;
+    }
+
+    /**
+     * Initializes entrance animations and enter button handler.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Cache view references
         View titleText = view.findViewById(R.id.titleText);
         View titleCard = view.findViewById(R.id.titleCard);
         View taglineText = view.findViewById(R.id.taglineText);
@@ -49,9 +85,6 @@ public class SplashFragment extends Fragment {
         titleText.animate().alpha(1f).translationX(0f)
                 .setDuration(600).setStartDelay(200).start();
 
-        taglineText.animate().alpha(1f)
-                .setDuration(400).setStartDelay(550).start();
-
         taglineText.setTranslationX(-30f);
         taglineText.animate().alpha(1f).translationX(0f)
                 .setDuration(500).setStartDelay(600).start();
@@ -60,29 +93,39 @@ public class SplashFragment extends Fragment {
         enterButton.animate().alpha(1f).translationY(0f)
                 .setDuration(500).setStartDelay(700).start();
 
-        enterButton.setOnClickListener(v -> {
-            AuthenticationService authService = new AuthenticationService();
+        enterButton.setOnClickListener(v -> handleEnterButton());
+    }
 
-            authService.signInAnonymously(success -> {
-                if (!success) return;
+    /**
+     * Handles enter button: auth → profile check → role-based navigation.
+     */
+    private void handleEnterButton() {
+        if (authService == null) authService = new AuthenticationService();
 
-                String uid = authService.getCurrentUserId();
-                ProfileRepository profileRepo = new ProfileRepository();
+        authService.signInAnonymously(success -> {
+            if (!success) return;
 
-                profileRepo.getProfile(uid, profile -> {
-                    if (!isAdded()) return;
+            String uid = authService.getCurrentUserId();
 
-                    requireActivity().runOnUiThread(() -> {
-                        NavController navController = NavHostFragment.findNavController(this);
+            if (profileRepo == null) profileRepo = new ProfileRepository();
 
-                        if (profile == null) {
-                            navController.navigate(R.id.action_splash_to_profile);
-                        } else if ("Admin".equals(profile.getRole())) {
-                            navController.navigate(R.id.action_splash_to_admin);
-                        } else {
-                            navController.navigate(R.id.action_splash_to_home);
-                        }
-                    });
+            profileRepo.getProfile(uid, profile -> {
+                if (!isAdded()) return;
+
+                requireActivity().runOnUiThread(() -> {
+                    NavController navController = NavHostFragment.findNavController(this);
+
+                    // Role based navigation routing
+                    if (profile == null) {
+                        // First-time user → profile setup
+                        navController.navigate(R.id.action_splash_to_profile);
+                    } else if ("Admin".equals(profile.getRole())) {
+                        // Admin role → admin dashboard
+                        navController.navigate(R.id.action_splash_to_admin);
+                    } else {
+                        // Regular user → home screen
+                        navController.navigate(R.id.action_splash_to_home);
+                    }
                 });
             });
         });
