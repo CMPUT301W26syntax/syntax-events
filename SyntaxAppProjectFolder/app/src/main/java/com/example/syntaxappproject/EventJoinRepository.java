@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class EventJoinRepository {
 
+    // Firestore instance used for all database operations
     private FirebaseFirestore db = null;
 
     /**

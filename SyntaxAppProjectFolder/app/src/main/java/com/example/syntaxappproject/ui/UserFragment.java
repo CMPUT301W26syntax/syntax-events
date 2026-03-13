@@ -16,21 +16,52 @@ import com.example.syntaxappproject.Profile;
 import com.example.syntaxappproject.ProfileRepository;
 import com.example.syntaxappproject.R;
 
+/**
+ * Fragment displaying the currently authenticated user's profile summary.
+ *
+ * <p>Shows name, email, phone, and avatar initial. Provides quick access to
+ * profile editing and event history screens via action buttons.</p>
+ */
 public class UserFragment extends HomeBar {
 
-    private final ProfileRepository profileRepo = new ProfileRepository();
-    private final AuthenticationService authService = new AuthenticationService();
+    /** Repository for loading user profile from Firestore. */
+    private ProfileRepository profileRepo = new ProfileRepository();
 
+    /** Service for retrieving current user authentication state. */
+    private AuthenticationService authService = new AuthenticationService();
+
+    /** UI elements for displaying profile data. */
     private TextView nameText, emailText, phoneText, emailDetailText, avatarInitial;
 
+    /**
+     * Inflates user profile layout.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_user, container, false);
     }
 
+    /**
+     * Setter for dependency injection (unit testing).
+     */
+    public void setProfileRepo(ProfileRepository profileRepo) {
+        this.profileRepo = profileRepo;
+    }
+
+    /**
+     * Setter for dependency injection (unit testing).
+     */
+    public void setAuthService(AuthenticationService authService) {
+        this.authService = authService;
+    }
+
+    /**
+     * Initializes views, animations, navigation buttons, and loads profile data.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         setupHotbar(view);
 
         nameText        = view.findViewById(R.id.profileName);
@@ -44,7 +75,6 @@ public class UserFragment extends HomeBar {
         View detailsCard  = view.findViewById(R.id.detailsCard);
         View actionsCard  = view.findViewById(R.id.actionsCard);
 
-        // --- Entrance Animations ---
         headerTitle.setTranslationY(-20f);
         headerTitle.animate().alpha(1f).translationY(0f)
                 .setDuration(400).setStartDelay(100).start();
@@ -61,7 +91,6 @@ public class UserFragment extends HomeBar {
         actionsCard.animate().alpha(1f).translationY(0f)
                 .setDuration(500).setStartDelay(420).start();
 
-        // --- Button listeners ---
         view.findViewById(R.id.personalizationButton).setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigate(R.id.editProfileFragment)
         );
@@ -73,19 +102,28 @@ public class UserFragment extends HomeBar {
         loadProfile();
     }
 
+    /**
+     * Fetches current user's profile from Firestore.
+     */
     private void loadProfile() {
         String uid = authService.getCurrentUserId();
+
         if (uid == null) {
             Toast.makeText(requireContext(), "No user logged in", Toast.LENGTH_SHORT).show();
             return;
         }
+
         profileRepo.getProfile(uid, this::displayProfile);
     }
 
+    /**
+     * Updates UI with profile data, handling null fields gracefully.
+     */
     private void displayProfile(Profile profile) {
         if (profile == null || !isAdded()) return;
 
         requireActivity().runOnUiThread(() -> {
+            // Provide fallbacks for missing profile fields
             String name  = profile.getName()  != null ? profile.getName()  : "No name set";
             String email = profile.getEmail() != null ? profile.getEmail() : "No email set";
             String phone = profile.getPhone() != null ? profile.getPhone() : "No phone set";
@@ -95,7 +133,6 @@ public class UserFragment extends HomeBar {
             emailDetailText.setText(email);
             phoneText.setText(phone);
 
-            // Set avatar initial from first letter of name
             if (profile.getName() != null && !profile.getName().isEmpty()) {
                 avatarInitial.setText(
                         String.valueOf(profile.getName().charAt(0)).toUpperCase()
