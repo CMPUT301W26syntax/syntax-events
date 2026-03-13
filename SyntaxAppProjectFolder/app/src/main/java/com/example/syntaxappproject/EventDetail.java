@@ -2,6 +2,16 @@ package com.example.syntaxappproject;
 
 import android.location.Criteria;
 
+/**
+ * Model class representing the detail of an event in the SyntaxEvents application.
+ * <p>
+ * Stores event id, organizer uid, event name, description, location, capacity,
+ * geoReq, event start and end date, start and end registration period,
+ * wait list count, lottery criteria, and poster. This class is used
+ * as a Firestore data model and is serialized/deserialized directly via
+ * {@code DocumentSnapshot.toObject(EventDetail.class)}.
+ * </p>
+ */
 public class EventDetail {
     // ─── Identity ─────────────────────────────────────────────────────────────
     private String eventId;
@@ -32,6 +42,23 @@ public class EventDetail {
 
     public EventDetail() {}
 
+    /**
+     * Constructs a fully initialized Profile.
+     *
+     * @param eventId                       the id of the event
+     * @param name                          the name of the event
+     * @param description                   the description of the event
+     * @param location                      the location of the event
+     * @param capacity                      the capacity of the event
+     * @param geoReq                        {@code true} if the event require geolocation
+     * @param startingEventDate             the start date of the event
+     * @param endingEventDate               the end date of the event
+     * @param startingRegistrationPeriod    the start date of registration
+     * @param endingRegistrationPeriod      the end date of registration
+     * @param waitlistCount                 the number of people in the wait list
+     * @param lotteryCriteria               the criteria of lottery
+     * @param poster                        the poster of the event
+     */
     public EventDetail(String eventId, String name, String description, String location, long capacity, boolean geoReq,
                  String startingEventDate, String endingEventDate,
                  String startingRegistrationPeriod, String endingRegistrationPeriod,
