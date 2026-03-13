@@ -10,7 +10,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
 
-public class FirebadeDatabaseTest {
+public class FirebaseDatabaseTest {
 
     @Test
     public void testFirebaseDatabase() {
