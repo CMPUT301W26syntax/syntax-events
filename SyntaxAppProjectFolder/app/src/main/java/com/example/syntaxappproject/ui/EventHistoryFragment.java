@@ -60,7 +60,7 @@ public class EventHistoryFragment extends HomeBar {
      * Repository for checking whether the current user has joined a specific event.
      * Package-private to allow injection in instrumented tests.
      */
-    final EventJoinRepository joinRepo = new EventJoinRepository();
+    EventJoinRepository joinRepo = new EventJoinRepository();
 
     /**
      * Inflates the event history layout.
@@ -127,6 +127,8 @@ public class EventHistoryFragment extends HomeBar {
      * <p>If no events are available, the adapter is updated with an empty list.</p>
      */
     private void loadJoinedEvents() {
+        if (disableFirestoreForTest) return; // completely skip Firestore for tests
+
         String uid = authService.getCurrentUserId();
 
         entrantHomeRepo.getEvents(events -> {
@@ -146,7 +148,6 @@ public class EventHistoryFragment extends HomeBar {
                         }
                     }
                     if (counter.incrementAndGet() == events.size()) {
-                        // Update adapter on UI thread once all checks finish
                         requireActivity().runOnUiThread(() -> adapter.updateList(joinedEvents));
                     }
                 });
@@ -166,6 +167,7 @@ public class EventHistoryFragment extends HomeBar {
         }
     }
 
+
     /**
      * Navigates to the event detail screen for the given event.
      *
@@ -181,5 +183,9 @@ public class EventHistoryFragment extends HomeBar {
         bundle.putString("eventId", event.getEventId());
         Navigation.findNavController(requireView()) // Navigate using root view (test-friendly)
                 .navigate(R.id.toEventDetailFragment, bundle);
+    }
+
+    public void setEventJoinRepo(EventJoinRepository repo) {
+        this.joinRepo = repo;
     }
 }
