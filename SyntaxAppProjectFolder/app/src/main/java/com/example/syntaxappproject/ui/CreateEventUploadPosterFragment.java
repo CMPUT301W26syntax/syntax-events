@@ -1,7 +1,10 @@
 package com.example.syntaxappproject.ui;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,8 +24,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.syntaxappproject.AuthenticationService;
 import com.example.syntaxappproject.EventViewModel;
 import com.example.syntaxappproject.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,6 +96,12 @@ public class CreateEventUploadPosterFragment extends Fragment {
         view.findViewById(R.id.skipPosterButton).setOnClickListener(v -> saveEventToFirebase());
     }
 
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        galleryLauncher.launch(intent);
+    }
+
     private void saveEventToFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String organizerUid = authService.getCurrentUserId();
@@ -102,28 +115,72 @@ public class CreateEventUploadPosterFragment extends Fragment {
         eventData.put("endingEventDate",     viewModel.getEndingEventDate().getValue());
         eventData.put("startingRegistrationPeriod",     viewModel.getStartingRegistrationPeriod().getValue());
         eventData.put("endingRegistrationPeriod",     viewModel.getEndingRegistrationPeriod().getValue());
-        eventData.put("poster",     viewModel.getImageUri().getValue());
         eventData.put("organizerUid", organizerUid);
 
         db.collection("events")
                 .add(eventData)
                 .addOnSuccessListener(documentReference -> {
                     String eventId = documentReference.getId();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("eventId", eventId);
-                    NavHostFragment.findNavController(this)
-                            .navigate(R.id.toCreateEventQRFragment, bundle);
+                    viewModel.setEventId(eventId);
+
+                    // If we have an image, upload it to Realtime Database
+                    if (selectedImageUri != null) {
+                        uploadPosterToRealtimeDatabase(eventId);
+                    } else {
+                        navigateToQRFragment(eventId);
+                    }
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show()
                 );
     }
 
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        galleryLauncher.launch(intent);
+    private void uploadPosterToRealtimeDatabase(String eventId) {
+        ContentResolver resolver = requireContext().getContentResolver();
+        try {
+            InputStream imageStream = resolver.openInputStream(selectedImageUri);
+            Bitmap imageBitmap = BitmapFactory.decodeStream(imageStream);
+            String imageType = resolver.getType(selectedImageUri);
+
+            // Check for image type
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            if (imageType != null && imageType.equals("image/png")) {
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            } else {
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            }
+
+            // Setting up data to push to store in json
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            String base64Image = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference reference = database.getReference("event_posters");
+
+            HashMap<String, String> imageData = new HashMap<>();
+            imageData.put("image", base64Image);
+            imageData.put("type", imageType);
+
+            reference.child(eventId).setValue(imageData)
+                    .addOnSuccessListener(aVoid -> navigateToQRFragment(eventId))
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "Failed to upload poster", Toast.LENGTH_SHORT).show();
+                        navigateToQRFragment(eventId); // Navigate anyway
+                    });
+
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Failed to process image", Toast.LENGTH_SHORT).show();
+            navigateToQRFragment(eventId);
+        }
     }
+
+    private void navigateToQRFragment(String eventId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("eventId", eventId);
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.toCreateEventQRFragment, bundle);
+    }
+
 
     private final ActivityResultLauncher<Intent> galleryLauncher =
             registerForActivityResult(
@@ -133,7 +190,6 @@ public class CreateEventUploadPosterFragment extends Fragment {
                                 && result.getData() != null) {
                             selectedImageUri = result.getData().getData();
                             posterPreview.setImageURI(selectedImageUri);
-                            // Hide the upload hint once an image is selected
                             if (uploadHint != null) uploadHint.setVisibility(View.GONE);
                         }
                     });

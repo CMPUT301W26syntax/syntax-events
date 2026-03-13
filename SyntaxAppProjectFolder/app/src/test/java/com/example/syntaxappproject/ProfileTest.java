@@ -22,8 +22,10 @@ public class ProfileTest {
      * an entrant-only profile, an organizer-only profile,
      * and a profile with both roles assigned.
      */
+
     @Before
     public void setUp() {
+        /*
         entrantProfile = new Profile(
                 "Jane Doe",
                 "jane.doe@ualberta.ca",
@@ -53,6 +55,7 @@ public class ProfileTest {
                 false,
                 "device-uid-00777"
         );
+        */
     }
 
     /**

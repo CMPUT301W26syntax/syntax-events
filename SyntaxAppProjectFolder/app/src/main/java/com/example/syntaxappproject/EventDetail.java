@@ -28,6 +28,7 @@ public class EventDetail {
 
     // ─── Media ────────────────────────────────────────────────────────────────
     private String poster;
+    private Ima
 
 
     public EventDetail() {}
