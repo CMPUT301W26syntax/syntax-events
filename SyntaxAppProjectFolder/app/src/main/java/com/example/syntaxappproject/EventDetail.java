@@ -63,9 +63,9 @@ public class EventDetail {
      * @param poster                        the poster of the event
      */
     public EventDetail(String eventId, String name, String description, String location, long capacity, boolean geoReq,
-                 String startingEventDate, String endingEventDate,
-                 String startingRegistrationPeriod, String endingRegistrationPeriod,
-                 long waitlistCount, String lotteryCriteria, String poster) {
+                       String startingEventDate, String endingEventDate,
+                       String startingRegistrationPeriod, String endingRegistrationPeriod,
+                       long waitlistCount, String lotteryCriteria, String poster) {
         this.eventId = eventId;
         this.name = name;
         this.description = description;

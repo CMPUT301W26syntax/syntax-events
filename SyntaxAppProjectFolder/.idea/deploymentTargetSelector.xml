@@ -8,10 +8,7 @@
       <SelectionState runConfigName="SplashFragmentTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="UserFragmentTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.syntaxappproject.ui'">
+      <SelectionState runConfigName="AdminFragmentTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="FirebaseDatabaseTest">

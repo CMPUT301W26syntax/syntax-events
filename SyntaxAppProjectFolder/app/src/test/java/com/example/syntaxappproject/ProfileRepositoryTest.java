@@ -104,7 +104,8 @@ public class ProfileRepositoryTest {
         sampleProfile = new Profile(
                 "Jane Doe",
                 "jane.doe@ualberta.ca",
-                "780-555-0192","Organizer",
+                "780-555-0192",
+                "Entrant",
                 true,
                 false,
                 true,
@@ -182,7 +183,8 @@ public class ProfileRepositoryTest {
         Profile updated = new Profile(
                 "Jane Smith",
                 "jane.smith@ualberta.ca",
-                null, "Organizer",
+                null,
+                "Entrant",
                 true,
                 true,
                 false,
@@ -203,7 +205,8 @@ public class ProfileRepositoryTest {
         Profile updated = new Profile(
                 "Jane Smith",
                 "jane.smith@ualberta.ca",
-                null, "Organizer",
+                null,
+                "Entrant",
                 true,
                 true,
                 false,

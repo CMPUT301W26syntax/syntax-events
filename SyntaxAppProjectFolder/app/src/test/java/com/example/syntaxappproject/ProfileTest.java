@@ -22,14 +22,14 @@ public class ProfileTest {
      * an entrant-only profile, an organizer-only profile,
      * and a profile with both roles assigned.
      */
-
     @Before
     public void setUp() {
-        /*
         entrantProfile = new Profile(
                 "Jane Doe",
                 "jane.doe@ualberta.ca",
-                "780-555-0192", "Entrant",
+                "780-555-0192",
+                "Entrant",
+
                 true,
                 false,
                 true,
@@ -39,7 +39,9 @@ public class ProfileTest {
         organizerProfile = new Profile(
                 "Marcus Lee",
                 "marcus.lee@ualberta.ca",
-                null, "Organizer",
+                null,
+                "Entrant",
+
                 false,
                 true,
                 true,
@@ -49,13 +51,14 @@ public class ProfileTest {
         dualRoleProfile = new Profile(
                 "Alex Ray",
                 "alex.ray@ualberta.ca",
-                "587-555-0344", "Organizer",
+                "587-555-0344",
+                "Entrant",
+
                 true,
                 true,
                 false,
                 "device-uid-00777"
         );
-        */
     }
 
     /**
