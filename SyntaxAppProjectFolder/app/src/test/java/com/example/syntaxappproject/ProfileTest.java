@@ -29,7 +29,7 @@ public class ProfileTest {
         entrantProfile = new Profile(
                 "Jane Doe",
                 "jane.doe@ualberta.ca",
-                "780-555-0192",
+                "780-555-0192", "Entrant",
                 true,
                 false,
                 true,
@@ -39,7 +39,7 @@ public class ProfileTest {
         organizerProfile = new Profile(
                 "Marcus Lee",
                 "marcus.lee@ualberta.ca",
-                null,
+                null, "Organizer",
                 false,
                 true,
                 true,
@@ -49,7 +49,7 @@ public class ProfileTest {
         dualRoleProfile = new Profile(
                 "Alex Ray",
                 "alex.ray@ualberta.ca",
-                "587-555-0344",
+                "587-555-0344", "Organizer",
                 true,
                 true,
                 false,
