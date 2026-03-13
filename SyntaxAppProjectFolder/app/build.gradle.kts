@@ -35,6 +35,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.fragment.testing)
+    implementation(libs.ext.junit)
+    implementation(libs.espresso.core)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     
     implementation(libs.appcompat)
@@ -55,6 +58,9 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation ("com.github.bumptech.glide:glide:5.0.5")
     annotationProcessor ("com.github.bumptech.glide:compiler:5.0.5")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    debugImplementation("androidx.fragment:fragment-testing:1.8.2")
     
     // Use compileOnly to provide Javadocs/symbols without breaking R8 desugaring
     compileOnly(files("${android.sdkDirectory}/platforms/android-${android.compileSdk}/android.jar"))
