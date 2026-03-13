@@ -15,16 +15,33 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-
+/**
+ * fragment for admin to browse all uploaded images in the system
+ * it gets image data from firestore and displays them in a recyclerview
+ * admin can look at the images and manage them from here
+ */
 public class AdminBrowseImages extends Fragment {
 
     private ArrayList<ImageItem> imageList;
     private ArrayList<String> imageIds;
     private ImageAdapter adapter;
 
+    /**
+     * empty public constructor for this fragment
+     */
     public AdminBrowseImages() {
     }
 
+
+/**
+ * creates the view for the admin browse images page
+ * it sets up the recyclerview and loads image data from firestore
+ *
+ * @param inflater used to inflate the fragment layout
+ * @param container parent view that the fragment layout will be attached to
+ * @param savedInstanceState previous saved state if there is one
+ * @return the root view for this fragment
+ */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_browse_images, container, false);
@@ -40,6 +57,7 @@ public class AdminBrowseImages extends Fragment {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     imageList.clear();
                     imageIds.clear();
+                    // loop through all image documents and add them into the list
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         String posterUrl = doc.getString("poster");
                         if (posterUrl != null && !posterUrl.isEmpty()) {

@@ -42,13 +42,14 @@ android {
 
 dependencies {
 
+    implementation(libs.firebase.database)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 
     implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(libs.firebase.database)
-
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -67,6 +68,7 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:runner:1.6.1")
@@ -81,5 +83,10 @@ dependencies {
     debugImplementation("androidx.fragment:fragment-testing:1.7.0")
     androidTestImplementation("org.mockito:mockito-android:5.11.0")
     androidTestImplementation("androidx.test:core:1.5.0")
+    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
+    implementation("com.google.firebase:firebase-database")
+    androidTestImplementation("androidx.fragment:fragment-testing:1.6.2")
+    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
 
+    debugImplementation("androidx.fragment:fragment-testing:1.7.0")
 }

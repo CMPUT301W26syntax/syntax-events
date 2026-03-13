@@ -42,6 +42,14 @@ public class CreateEventUploadPosterFragment extends Fragment {
 
     private final AuthenticationService authService = new AuthenticationService();
 
+    /**
+     * Inflates the upload poster layout.
+     *
+     * @param inflater  the layout inflater
+     * @param container the parent view group
+     * @param savedInstanceState previously saved state, or {@code null}
+     * @return the inflated view for this fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -50,6 +58,14 @@ public class CreateEventUploadPosterFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_create_event_upload_poster, container, false);
     }
 
+    /**
+     * Called immediately after {@link #onCreateView}. Binds views, applies
+     * entrance animations, and attaches click handlers for poster selection,
+     * continue, and skip.
+     *
+     * @param view               the view returned by {@link #onCreateView}
+     * @param savedInstanceState previously saved state, or {@code null}
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -96,12 +112,24 @@ public class CreateEventUploadPosterFragment extends Fragment {
         view.findViewById(R.id.skipPosterButton).setOnClickListener(v -> saveEventToFirebase());
     }
 
+    /**
+     * Launches the device gallery via an {@link Intent} to allow the
+     * organizer to pick an image for the event poster.
+     */
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         galleryLauncher.launch(intent);
     }
 
+    /**
+     * Writes all event data collected in {@link EventViewModel} to Firestore
+     * as a new document in the {@code events} collection.
+     * <p>
+     * On success, navigates to the QR code step passing the new event ID.
+     * On failure, displays a short toast to the user.
+     * </p>
+     */
     private void saveEventToFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String organizerUid = authService.getCurrentUserId();
@@ -135,6 +163,13 @@ public class CreateEventUploadPosterFragment extends Fragment {
                 );
     }
 
+    /**
+     * Handles the result from the gallery picker.
+     * <p>
+     * If the user selected an image, stores the URI in {@link #selectedImageUri},
+     * displays a preview in {@link #posterPreview}, and hides the upload hint.
+     * </p>
+     */
     private void uploadPosterToRealtimeDatabase(String eventId) {
         ContentResolver resolver = requireContext().getContentResolver();
         try {
@@ -180,7 +215,6 @@ public class CreateEventUploadPosterFragment extends Fragment {
         NavHostFragment.findNavController(this)
                 .navigate(R.id.toCreateEventQRFragment, bundle);
     }
-
 
     private final ActivityResultLauncher<Intent> galleryLauncher =
             registerForActivityResult(
