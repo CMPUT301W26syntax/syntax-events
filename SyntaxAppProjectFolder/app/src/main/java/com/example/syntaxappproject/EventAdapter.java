@@ -1,6 +1,9 @@
 package com.example.syntaxappproject;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +12,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -56,9 +57,28 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
 
         holder.eventName.setText(event.getName());
 
-        Glide.with(holder.itemView.getContext())
-                .load(event.getPoster())
-                .into(holder.eventImage);
+        // Use the new fetchByEventId method to load the image from Realtime Database
+        ImageItem.fetchByEventId(event.getEventId(), new ImageItem.ImageCallback() {
+            @Override
+            public void onImageLoaded(ImageItem imageItem) {
+                if (imageItem != null && imageItem.imageUrl != null) {
+                    try {
+                        byte[] decodedString = Base64.decode(imageItem.imageUrl, Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        holder.eventImage.setImageBitmap(decodedByte);
+                    } catch (Exception e) {
+                        holder.eventImage.setImageResource(R.drawable.ic_launcher_background); // Default
+                    }
+                } else {
+                    holder.eventImage.setImageResource(R.drawable.ic_launcher_background); // Default
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                holder.eventImage.setImageResource(R.drawable.ic_launcher_background); // Default
+            }
+        });
 
         holder.itemView.setOnClickListener(v -> listener.onItemClick(event));
     }
