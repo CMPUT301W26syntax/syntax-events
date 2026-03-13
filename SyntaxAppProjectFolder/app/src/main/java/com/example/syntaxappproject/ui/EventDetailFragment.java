@@ -1,7 +1,10 @@
 package com.example.syntaxappproject.ui;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.example.syntaxappproject.AuthenticationService;
 import com.example.syntaxappproject.EventDetailRepository;
 import com.example.syntaxappproject.EventJoinRepository;
+import com.example.syntaxappproject.ImageItem;
+import com.example.syntaxappproject.QRCodeService;
 import com.example.syntaxappproject.R;
 import com.google.android.material.button.MaterialButton;
 
@@ -53,12 +58,14 @@ public class EventDetailFragment extends HomeBar {
         TextView wLCount            = view.findViewById(R.id.eventWLCount);
         TextView lotteryCriteria    = view.findViewById(R.id.eventLotteryCriteria);
         MaterialButton joinButton   = view.findViewById(R.id.joinButton);
+        ImageView qrCodeImageView   = view.findViewById(R.id.eventQRCode);
 
         View headerTitle  = view.findViewById(R.id.headerTitle);
         View backButton   = view.findViewById(R.id.eventDetailBackButton);
         View posterCard   = view.findViewById(R.id.posterCard);
         View nameCard     = view.findViewById(R.id.nameCard);
         View detailsCard  = view.findViewById(R.id.detailsCard);
+        View qrCard       = view.findViewById(R.id.qrCard);
 
         // --- Entrance Animations ---
         headerTitle.setTranslationY(-20f);
@@ -81,10 +88,45 @@ public class EventDetailFragment extends HomeBar {
         detailsCard.animate().alpha(1f).translationY(0f)
                 .setDuration(500).setStartDelay(390).start();
 
+        qrCard.setTranslationY(30f);
+        qrCard.animate().alpha(1f).translationY(0f)
+                .setDuration(500).setStartDelay(480).start();
+
         // --- Back button ---
         view.findViewById(R.id.eventDetailBackButton).setOnClickListener(v ->
                 NavHostFragment.findNavController(this).popBackStack()
         );
+
+        // --- Generate and display QR Code ---
+        if (eventId != null) {
+            Bitmap qrBitmap = QRCodeService.generateQRCode(eventId);
+            if (qrBitmap != null) {
+                qrCodeImageView.setImageBitmap(qrBitmap);
+            }
+        }
+
+        // --- Load event poster from Realtime Database ---
+        if (eventId != null) {
+            ImageItem.fetchByEventId(eventId, new ImageItem.ImageCallback() {
+                @Override
+                public void onImageLoaded(ImageItem imageItem) {
+                    if (isAdded() && imageItem != null && imageItem.imageUrl != null) {
+                        try {
+                            byte[] decodedString = Base64.decode(imageItem.imageUrl, Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            requireActivity().runOnUiThread(() -> eventPoster.setImageBitmap(decodedByte));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
 
         // --- Join button state ---
         String uid = authService.getCurrentUserId();
@@ -100,7 +142,10 @@ public class EventDetailFragment extends HomeBar {
         new EventDetailRepository().getEventDetail(eventId, event -> {
             if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
-                Glide.with(this).load(event.getPoster()).into(eventPoster);
+                // If poster is not found in Realtime DB, fall back to Glide with Firestore URL
+                if (eventPoster.getDrawable() == null) {
+                    Glide.with(this).load(event.getPoster()).into(eventPoster);
+                }
                 eventName.setText(event.getName());
                 description.setText(event.getDescription());
                 date.setText(event.getStartingEventDate());

@@ -28,7 +28,7 @@ public class EventDetail {
 
     // ─── Media ────────────────────────────────────────────────────────────────
     private String poster;
-    private Ima
+    private ImageItem posterImage;
 
 
     public EventDetail() {}

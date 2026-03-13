@@ -57,7 +57,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
 
         holder.eventName.setText(event.getName());
 
-        // Use the new fetchByEventId method to load the image from Realtime Database
+        // Use the new fetchByEventId method to load the image from the clouds
         ImageItem.fetchByEventId(event.getEventId(), new ImageItem.ImageCallback() {
             @Override
             public void onImageLoaded(ImageItem imageItem) {

@@ -52,6 +52,21 @@
         android:id="@+id/tv_detail_event_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location: " />
+        android:text="Location: "
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event QR Code:"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <ImageView
+        android:id="@+id/iv_event_qr_code"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitCenter" />
 
 </LinearLayout>
