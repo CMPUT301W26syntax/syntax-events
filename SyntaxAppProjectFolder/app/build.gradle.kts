@@ -78,6 +78,8 @@ dependencies {
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
     androidTestImplementation("org.mockito:mockito-android:5.11.0")
     androidTestImplementation("androidx.test:core:1.5.0")
+    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
+    implementation("com.google.firebase:firebase-database")
 
     debugImplementation("androidx.fragment:fragment-testing:1.7.0")
 }

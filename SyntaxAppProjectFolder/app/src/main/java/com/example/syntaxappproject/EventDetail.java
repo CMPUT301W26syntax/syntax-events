@@ -1,6 +1,7 @@
 package com.example.syntaxappproject;
 
 import android.location.Criteria;
+import android.media.Image;
 
 /**
  * Model class representing the detail of an event in the SyntaxEvents application.
@@ -38,7 +39,6 @@ public class EventDetail {
 
     // ─── Media ────────────────────────────────────────────────────────────────
     private String poster;
-    private Ima
 
     /**
      * Required no-argument constructor for Firestore deserialization.
@@ -63,9 +63,9 @@ public class EventDetail {
      * @param poster                        the poster of the event
      */
     public EventDetail(String eventId, String name, String description, String location, long capacity, boolean geoReq,
-                 String startingEventDate, String endingEventDate,
-                 String startingRegistrationPeriod, String endingRegistrationPeriod,
-                 long waitlistCount, String lotteryCriteria, String poster) {
+                       String startingEventDate, String endingEventDate,
+                       String startingRegistrationPeriod, String endingRegistrationPeriod,
+                       long waitlistCount, String lotteryCriteria, String poster) {
         this.eventId = eventId;
         this.name = name;
         this.description = description;
